@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: bf8b4a7c8be80534cafcf0cd901db57b
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 291473
+  packageName: LowpolyEnvironmentPack
+  packageVersion: 1.1
+  assetPath: Assets/VertexModeler/LowpolyEnvironmentPack/Material/Material/Mat_SandSotrm.mat
+  uploadId: 682767

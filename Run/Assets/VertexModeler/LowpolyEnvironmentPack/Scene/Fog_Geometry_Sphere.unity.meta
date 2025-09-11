@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: eda72fb3d1addfe40b10ee54d59c05b7
+DefaultImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 291473
+  packageName: LowpolyEnvironmentPack
+  packageVersion: 1.1
+  assetPath: Assets/VertexModeler/LowpolyEnvironmentPack/Scene/Fog_Geometry_Sphere.unity
+  uploadId: 682767

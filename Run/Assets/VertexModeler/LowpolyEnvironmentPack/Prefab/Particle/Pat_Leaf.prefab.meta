@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: e22a16e56ea40bd41862e8032daf7e1a
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 291473
+  packageName: LowpolyEnvironmentPack
+  packageVersion: 1.1
+  assetPath: Assets/VertexModeler/LowpolyEnvironmentPack/Prefab/Particle/Pat_Leaf.prefab
+  uploadId: 682767

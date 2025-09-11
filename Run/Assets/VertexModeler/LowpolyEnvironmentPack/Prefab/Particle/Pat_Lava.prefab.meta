@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 3ee988a7ae7ffd44992271614ede80c3
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 291473
+  packageName: LowpolyEnvironmentPack
+  packageVersion: 1.1
+  assetPath: Assets/VertexModeler/LowpolyEnvironmentPack/Prefab/Particle/Pat_Lava.prefab
+  uploadId: 682767

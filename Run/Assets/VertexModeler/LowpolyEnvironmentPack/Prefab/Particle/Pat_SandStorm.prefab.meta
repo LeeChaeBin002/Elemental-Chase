@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 252a25284d2457e44a74f7f480c3baad
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 291473
+  packageName: LowpolyEnvironmentPack
+  packageVersion: 1.1
+  assetPath: Assets/VertexModeler/LowpolyEnvironmentPack/Prefab/Particle/Pat_SandStorm.prefab
+  uploadId: 682767

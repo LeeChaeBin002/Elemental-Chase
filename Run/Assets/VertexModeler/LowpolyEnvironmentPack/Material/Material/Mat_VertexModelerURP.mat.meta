@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ceb5d629b12f8c4429acb3b60fd67c7a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 291473
+  packageName: LowpolyEnvironmentPack
+  packageVersion: 1.1
+  assetPath: Assets/VertexModeler/LowpolyEnvironmentPack/Material/Material/Mat_VertexModelerURP.mat
+  uploadId: 682767

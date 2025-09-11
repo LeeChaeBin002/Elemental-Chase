@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: f62a8b9393dc785498f21932f12397b1
+PrefabImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 291473
+  packageName: LowpolyEnvironmentPack
+  packageVersion: 1.1
+  assetPath: Assets/VertexModeler/LowpolyEnvironmentPack/Prefab/Particle/Pat_Snow.prefab
+  uploadId: 682767

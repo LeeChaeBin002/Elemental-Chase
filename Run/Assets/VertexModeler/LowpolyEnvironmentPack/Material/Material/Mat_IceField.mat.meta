@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: f898f6379f5903e4aa562d2ab6d11dd2
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 291473
+  packageName: LowpolyEnvironmentPack
+  packageVersion: 1.1
+  assetPath: Assets/VertexModeler/LowpolyEnvironmentPack/Material/Material/Mat_IceField.mat
+  uploadId: 682767

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: acfb2ab0fca72f845af83349586ad35e
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 291473
+  packageName: LowpolyEnvironmentPack
+  packageVersion: 1.1
+  assetPath: Assets/VertexModeler/LowpolyEnvironmentPack/Material/patricle/Mat_Snow.mat
+  uploadId: 682767

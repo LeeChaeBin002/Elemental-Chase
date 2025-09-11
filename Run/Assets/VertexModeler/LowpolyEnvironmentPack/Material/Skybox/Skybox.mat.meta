@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 692db47145d208b47847ffef8f44957c
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 2100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 291473
+  packageName: LowpolyEnvironmentPack
+  packageVersion: 1.1
+  assetPath: Assets/VertexModeler/LowpolyEnvironmentPack/Material/Skybox/Skybox.mat
+  uploadId: 682767

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 159427114940e7844ad6da61d72194c2
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 291473
+  packageName: LowpolyEnvironmentPack
+  packageVersion: 1.1
+  assetPath: Assets/VertexModeler/LowpolyEnvironmentPack/Scene/Fog/GlobalVolumeProfile.asset
+  uploadId: 682767
