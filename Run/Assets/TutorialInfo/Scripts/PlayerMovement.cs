@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
+using static UnityEditor.PlayerSettings;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -23,6 +24,7 @@ public class PlayerMovement : MonoBehaviour
 
     public float fallSpeed = 10f; // 낙하 속도
     private bool isFalling = false;
+    public Transform respawnPoint;
 
     private bool isDead = false;
     void Start()
@@ -41,14 +43,14 @@ public class PlayerMovement : MonoBehaviour
     {
         if (isDead) return;
 
-        if (!isDead && transform.position.y < -10f)
+        if (!isDead && transform.position.y < -5f)
         {
             Die();
             return; // 더 이상 아래 코드 실행하지 않음
         }
 
         // 바닥 체크
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, 1.1f);
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, 1f);
 
         if (!isGrounded && !isFalling) // 땅에서 떨어짐 감지
         {
@@ -78,7 +80,7 @@ public class PlayerMovement : MonoBehaviour
         // 이전 프레임 바닥 상태 저장
         wasGrounded = isGrounded;
         // 바닥 체크
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, 1.1f);
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, 1f);
         // 바닥 체크
         //animator.SetBool("isGrounded", isGrounded);
 
@@ -141,24 +143,7 @@ public class PlayerMovement : MonoBehaviour
 
             }
     }
-   
-
-    IEnumerator WaitForDieAnimation()
-    {
-        // Die 상태로 들어갈 때까지 대기
-        
-        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-        while (!stateInfo.IsTag("Die"))  // 상태 이름 대신 Tag로 체크
-        {
-            yield return null;
-            stateInfo = animator.GetCurrentAnimatorStateInfo(0);
-        }
-
-        // 애니메이션 길이만큼 대기
-        yield return new WaitForSeconds(stateInfo.length);
-
-        RespawnInstant();
-    }
+  
     void Die()
     {
         if (isDead) return;
@@ -169,7 +154,14 @@ public class PlayerMovement : MonoBehaviour
 
         animator.SetTrigger("Die");
 
-        StartCoroutine(WaitForDieAnimation());
+        StartCoroutine(RespawnAfterDelay(1.9f));
+    }
+
+    IEnumerator RespawnAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        RespawnInstant();
+        isDead = false;
     }
     public void OnDieAnimationEnd()
     {
@@ -177,26 +169,24 @@ public class PlayerMovement : MonoBehaviour
         RespawnInstant();
     }
 
-    IEnumerator Respawn()
-    {
-        yield return null;
-        // 리스폰 처리
-        transform.position = Vector3.zero;
-        rb.linearVelocity = Vector3.zero;
-        rb.isKinematic = false;
-        animator.SetInteger("animation", 34); // Idle 상태로 복귀
-        isDead = false;
-    }
-
+  
     void RespawnInstant()
     {
-        transform.position = Vector3.zero;
+        Vector3 pos = respawnPoint.position;
+        RaycastHit hit;
+        if (Physics.Raycast(pos + Vector3.up * 5f, Vector3.down, out hit, 20f))
+        {
+            pos.y = hit.point.y + 0.1f;
+        }
+        transform.position = pos;
+
         rb.linearVelocity = Vector3.zero;
         rb.isKinematic = false;
 
         // Idle 상태로 되돌리기
         animator.ResetTrigger("Die");      // 트리거 초기화
         animator.SetInteger("animation", 34); // Idle 애니메이션 실행
+        animator.Play("Idle", -1, 0f);
 
         isDead = false;
     }
