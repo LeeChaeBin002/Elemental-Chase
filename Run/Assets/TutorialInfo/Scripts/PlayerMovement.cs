@@ -15,7 +15,7 @@ public class PlayerMovement : MonoBehaviour
 
     public float fallMultiplier = 2.5f; // 낙하 가속 배율
 
-    private float keyHoldTime = 0f;
+    //private float keyHoldTime = 0f;
     private UnityEngine.Rigidbody rb; // 네임스페이스 확실히 지정
     private bool isGrounded = true;
     private bool hasJumped = false;

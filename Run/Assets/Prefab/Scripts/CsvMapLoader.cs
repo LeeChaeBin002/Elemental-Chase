@@ -1,15 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
 public class CsvMapLoader : MonoBehaviour
 {
-    public GameObject prefab;
+    // public GameObject prefab;
+    public TextAsset csvFile;
     public List<MapObject> objects = new List<MapObject>();
 
     void Start()
     {
-        string path = Path.Combine(Application.streamingAssetsPath, "MapObjects.csv");
+        string path = Path.Combine(Application.dataPath, "Prefab/MapObjects.csv");
 
         if (!File.Exists(path))
         {
@@ -36,31 +38,26 @@ public class CsvMapLoader : MonoBehaviour
                 stateId = int.Parse(cols[7]),
                 description = cols[8]
             };
-
+            Debug.Log($"생성된 MapObject → name:{obj.name}, id:{obj.id}, buffId:{obj.buffId}"); // MapObject 생성 확인
             objects.Add(obj);
-        
 
-            // 오브젝트 생성
-            Vector3 pos = new Vector3(i * 3, 0, 0);
-            var go = Instantiate(prefab, pos, Quaternion.identity);
-            go.name = obj.name;
 
-            // ID 기반으로 효과 스크립트 붙이기
-            if (obj.buffId == 324020 || obj.buffId == 324040)
+            // 🔑 Hierarchy 오브젝트 중 ObjectId.id 와 매칭
+            foreach (var objId in FindObjectsByType<ObjectId>(FindObjectsSortMode.None))
             {
-                var eff = go.AddComponent<SlowEffect>();
-                eff.effectData = obj;
+                Debug.Log($"Hierarchy 오브젝트: {objId.gameObject.name}, ObjectId:{objId.id}");
+
+                if (objId.id == obj.id)
+                {
+                    var eff = objId.GetComponent<Effect>();
+                    if (eff == null)
+                        eff = objId.gameObject.AddComponent<Effect>();
+
+                    eff.effectData = obj;
+                    Debug.Log($"{obj.name}({obj.id}) → {objId.gameObject.name} 매칭 완료");
+                }
             }
-            else if (obj.stateId == 31110)
-            {
-                var eff = go.AddComponent<StunEffect>();
-                eff.effectData = obj;
-            }
-            else if (obj.buffId == 0 && obj.stateId == 0)
-            {
-                var eff = go.AddComponent<DamageEffect>();
-                eff.effectData = obj;
-            }
+
         }
     }
 }
