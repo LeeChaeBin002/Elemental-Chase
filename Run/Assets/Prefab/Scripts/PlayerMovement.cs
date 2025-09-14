@@ -136,7 +136,7 @@ public class PlayerMovement : MonoBehaviour
     IEnumerator StunCoroutine(float duration)
     {
         isStunned = true;
-        rb.velocity = Vector3.zero;
+        rb.linearVelocity = Vector3.zero;
         animator.SetInteger("animation", 34);
         yield return new WaitForSeconds(duration);
         isStunned = false;
