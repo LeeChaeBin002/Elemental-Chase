@@ -9,6 +9,9 @@ public class PlayerMovement : MonoBehaviour
 
     public float runSpeed = 5f;
     public float jumpForce = 5f;
+    private bool isStunned = false;
+
+    public GameObject blindOverlay;
 
     public VirtualJoystick joystick; // 조이스틱 연결용
     public Button jumpButton;
@@ -41,6 +44,8 @@ public class PlayerMovement : MonoBehaviour
     }
     void Update()
     {
+        if (isStunned) return;
+
         if (isDead) return;
 
         if (!isDead && transform.position.y < -5f)
@@ -122,6 +127,29 @@ public class PlayerMovement : MonoBehaviour
             rb.linearVelocity = Vector3.zero;
         }
      
+    }
+    public void ApplyStun(float duration)//스턴지속
+    {
+        StartCoroutine(StunCoroutine(duration));
+    }
+
+    IEnumerator StunCoroutine(float duration)
+    {
+        isStunned = true;
+        rb.velocity = Vector3.zero;
+        animator.SetInteger("animation", 34);
+        yield return new WaitForSeconds(duration);
+        isStunned = false;
+    }
+    public void ApplyBlind(float duration)//시야가려짐
+    {
+        StartCoroutine(BlindCoroutine(duration));
+    }
+    IEnumerator BlindCoroutine(float duration)
+    {
+        if (blindOverlay != null) blindOverlay.SetActive(true);
+        yield return new WaitForSeconds(duration);
+        if (blindOverlay != null) blindOverlay.SetActive(false);
     }
     void FixedUpdate()
     {

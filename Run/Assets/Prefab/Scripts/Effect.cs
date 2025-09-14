@@ -28,13 +28,25 @@ public class Effect : MonoBehaviour
                     case 324040:
                         pm.runSpeed *= 0.6f;//바위장애물 3초간 40% 이속 감소
                         break;
-                    //case 321060: // 물폭탄 : 닿으면 몬스터 이속 60% 감소(3초)
-                    //    pm.runSpeed *= 0.4f;
-                    //    break;
+                    case 321060: // 물폭탄 : 닿으면 몬스터 이속 60% 감소(3초)
+                        //pm.runSpeed *= 0.4f;
+                       break;
                     case 311060: // 바람통로 : 닿는 동안 이속 60% 증가
                         pm.runSpeed *= 1.6f;
                         break;
+               
+
                 }
+
+            switch(effectData.stateId)
+            {
+                case 31110:
+                    pm.ApplyStun(2f);//넝쿨: 2초간 스턴
+                    break;
+                case 32001:
+                    pm.ApplyBlind(3f); //머드칠: 3초간 시야 차단
+                    break;
+            }
                     Debug.Log($"[효과 발동]\n" +
                     $"- Name: {effectData.name}\n" +
                     $"- ID: {effectData.id}\n" +
@@ -47,13 +59,4 @@ public class Effect : MonoBehaviour
         }
     }
 
-//    void OnTriggerExit(Collider other)
-//    {
-//        if (other.CompareTag("Player"))
-//        {
-//            PlayerMovement pm = other.GetComponent<PlayerMovement>();
-//            if (pm != null) pm.runSpeed = originalSpeed;
-//            Debug.Log($"{effectData.name} 종료");
-//        }
-//    }
-//}
+
