@@ -11,8 +11,8 @@ public class DataManager : MonoBehaviour
 
     void Awake()
     {
-        rewards = CsvRewordLoader.LoadRewards(rewardCsv);
-        scores = CsvRewordLoader.LoadScores(scoreCsv);
+        rewards = CsvRewardLoader.LoadRewards(rewardCsv);
+        scores = CsvRewardLoader.LoadScores(scoreCsv);
 
         Debug.Log($"보상 {rewards.Count}개, 스코어 {scores.Count}개 불러옴");
     }

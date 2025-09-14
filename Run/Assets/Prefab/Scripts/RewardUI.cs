@@ -15,7 +15,7 @@ public class RewardUI : MonoBehaviour
     {
         gameObject.SetActive(false);
         dataManager = FindObjectOfType<DataManager>();
-      
+
     }
 
     public void ShowReward()
@@ -32,25 +32,42 @@ public class RewardUI : MonoBehaviour
         int collectedCoins = ScoreManager.instance.coinCount; // 코인 개수 가져오기
 
         StringBuilder sb = new StringBuilder();
-        sb.AppendLine("🎉 클리어 보상 🎉");
+        sb.AppendLine("클리어 보상");
         sb.AppendLine($"획득한 코인: {collectedCoins}");
+        sb.AppendLine();
 
+        RewardData bestReward = null;
+
+        foreach (var r in dataManager.rewards)
+        {
+            Debug.Log($"RewardData: Name={r.Name}, Type={r.ConditionType}, Threshold={r.Threshold}, Amount={r.Amount}");
+            if (r.ConditionType == 1 && collectedCoins >= r.Threshold)
+            {
+                if (bestReward == null || r.Threshold > bestReward.Threshold)
+                {
+                    bestReward = r;
+                }
+            }
+        }
+
+        if (bestReward != null)
+        {
+            sb.AppendLine($"▶ {bestReward.Name} 달성!");
+            sb.AppendLine($"   재화 +{bestReward.Amount}");
+            sb.AppendLine();
+        }
 
 
         foreach (var r in dataManager.rewards)
         {
-
-            if (r.ConditionType == 1 && collectedCoins >= r.Threshold)
+            if (r.ConditionType == 2)
             {
-                sb.AppendLine($"{r.Name} x{r.Amount}");
-            }
-
-            if (r.ConditionType == 2) 
-            {
-                rewardText.text += $"{r.Name} x{r.Amount}\n";
+                sb.AppendLine($"▶ {r.Name} 달성!");
+                sb.AppendLine($"   재화 +{r.Amount}");
+                sb.AppendLine();
             }
         }
-
         rewardText.text = sb.ToString();
     }
 }
+
