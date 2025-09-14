@@ -6,6 +6,7 @@ public class Coin : MonoBehaviour
     public float rotateSpeed = 180f; // 초당 회전 속도
     public int scoreValue = 5;      // 코인 점수
 
+
     void Update()
     {
         // Y축 기준으로 계속 회전
