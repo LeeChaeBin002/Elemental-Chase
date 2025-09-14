@@ -23,7 +23,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isGrounded = true;
     private bool hasJumped = false;
     private bool wasGrounded = false; // 이전 프레임의 바닥 상태
-    private bool buttonPressed = false;
+    
 
     public float fallSpeed = 10f; // 낙하 속도
     private bool isFalling = false;
@@ -94,7 +94,7 @@ public class PlayerMovement : MonoBehaviour
         if (!wasGrounded && isGrounded)
         {
             hasJumped = false; // 착지하면 다시 점프 가능
-            buttonPressed = false;
+         
         }
         //조이스틱 입력값
         Vector2 joyInput = joystick.Input;
@@ -168,7 +168,7 @@ public class PlayerMovement : MonoBehaviour
         if (isGrounded && !hasJumped)
             {
                 animator.SetTrigger("Jump");   // 애니메이션 실행
-
+               
             }
     }
   
@@ -220,6 +220,6 @@ public class PlayerMovement : MonoBehaviour
     }
     public void ResetButtonState()
     {
-        buttonPressed = false;
+        //buttonPressed = false;
     }
 }

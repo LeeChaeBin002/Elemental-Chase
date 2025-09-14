@@ -56,7 +56,21 @@ public class Effect : MonoBehaviour
 
                 //Debug.Log($"{effectData.name} 발동 → {effectData.description}");
             }
-        }
+
+        
     }
+    void OnTriggerExit(Collider other)
+    {
+        if (!other.CompareTag("Player")) return;
+
+        PlayerMovement pm = other.GetComponent<PlayerMovement>();
+        if (pm == null) return;
+
+        // 효과 끝났을 때 속도 원래대로 복구
+        pm.runSpeed = originalSpeed;
+
+        Debug.Log($"{effectData.name} 효과 종료 → 속도 복구");
+    }
+}
 
 

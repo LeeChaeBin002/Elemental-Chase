@@ -6,7 +6,10 @@ public class ScoreManager : MonoBehaviour
 {
     public static ScoreManager instance;
 
-    private int score = 0;
+    public int score = 0;       // 점수
+    public int coinCount = 0;   // 코인 개수 카운트
+
+  
     public TextMeshProUGUI scoreText; // UI 텍스트 연결 (예: "Score : 0")
 
     private float timeCounter = 0f;
@@ -32,6 +35,7 @@ public class ScoreManager : MonoBehaviour
     public void AddScore(int value)
     {
         score += value;
+        coinCount++;
         UpdateUI();
     }
 
