@@ -15,15 +15,13 @@ using System.Collections;
             }
             character[0].SetActive(true);
         }
-        void OnGUI()
-        {
-            if (GUI.Button(new Rect(Screen.width - 70,0, 70, 70), btn_tex))
-            {
-                character[index].SetActive(false);
-                index++;
-                index %= character.Length;
-                character[index].SetActive(true);
-            }
-        }
+    // 버튼 클릭 시 호출될 메서드
+    public void SwapCharacter()
+    {
+        character[index].SetActive(false);
+        index++;
+        index %= character.Length;
+        character[index].SetActive(true);
     }
+}
 
