@@ -87,7 +87,6 @@ GameObject:
   - component: {fileID: 6247644217584457544}
   - component: {fileID: 5127906089660002744}
   - component: {fileID: 8533073444957023921}
-  - component: {fileID: 2727193138509263107}
   m_Layer: 5
   m_Name: JoyStick
   m_TagString: Untagged
@@ -167,17 +166,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   background: {fileID: 6517754365923610710}
   handle: {fileID: 2705021640625024289}
---- !u!114 &2727193138509263107
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4160104994557351299}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: da18d90c52d534c4b86af5bf590852b0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rewardCsv: {fileID: 4900000, guid: 11b31920880cf4e459e14a933e93b59f, type: 3}
-  scoreCsv: {fileID: 4900000, guid: 2a5f09363373ef44db3df2b295f66dd4, type: 3}

@@ -18,7 +18,7 @@ public class VirtualJoystick : MonoBehaviour, IDragHandler, IBeginDragHandler, I
 
     private void Update()
     {
-        //Debug.Log(Input);
+        Debug.Log(Input);
     }
 
     public void OnBeginDrag(PointerEventData eventData)

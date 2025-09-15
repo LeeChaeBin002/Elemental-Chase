@@ -110,7 +110,8 @@ public class PlayerMovement : MonoBehaviour
         {
             // Run
             animator.SetInteger("animation", 18);
-            rb.linearVelocity = moveInput.normalized * runSpeed;
+            if (!rb.isKinematic)
+                rb.velocity = moveInput.normalized * runSpeed;
 
             //  이동 방향으로 회전
             Quaternion targetRotation = Quaternion.LookRotation(moveInput, Vector3.up);
@@ -124,7 +125,9 @@ public class PlayerMovement : MonoBehaviour
         {
             // Idle
             animator.SetInteger("animation", 34);
-            rb.linearVelocity = Vector3.zero;
+
+            if (!rb.isKinematic)
+                rb.linearVelocity = Vector3.zero;
         }
      
     }
@@ -153,10 +156,10 @@ public class PlayerMovement : MonoBehaviour
     }
     void FixedUpdate()
     {
-        if (!isGrounded && rb.linearVelocity.y < 0) // 공중 + 하강 중일 때
+        if (!isGrounded && rb.velocity.y < 0) // 공중 + 하강 중일 때
         {
             // 중력 가속을 더해준다
-            rb.linearVelocity += Vector3.up * Physics.gravity.y * (fallMultiplier - 1) * Time.fixedDeltaTime;
+            rb.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier - 1) * Time.fixedDeltaTime;
         }
     }
 
@@ -177,7 +180,8 @@ public class PlayerMovement : MonoBehaviour
         if (isDead) return;
 
         isDead = true;
-        rb.linearVelocity = Vector3.zero;
+        if (!rb.isKinematic)
+            rb.velocity = Vector3.zero;
         rb.isKinematic = true;
 
         animator.SetTrigger("Die");
@@ -204,7 +208,7 @@ public class PlayerMovement : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(pos + Vector3.up * 5f, Vector3.down, out hit, 20f))
         {
-            pos.y = hit.point.y + 0.1f;
+            pos.y = hit.point.y + 0.01f;
         }
         transform.position = pos;
 
@@ -214,7 +218,7 @@ public class PlayerMovement : MonoBehaviour
         // Idle 상태로 되돌리기
         animator.ResetTrigger("Die");      // 트리거 초기화
         animator.SetInteger("animation", 34); // Idle 애니메이션 실행
-        animator.Play("Idle", -1, 0f);
+        animator.Play("Idle", 0, 0f);
 
         isDead = false;
     }
