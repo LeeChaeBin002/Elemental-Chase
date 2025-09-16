@@ -11,7 +11,7 @@ public class CsvMapLoader : MonoBehaviour
 
     void Start()
     {
-        string path = Path.Combine(Application.dataPath, "Prefab/MapObjects.csv");
+        string path = Path.Combine(Application.dataPath, "Prefab/CSV/MapObjects.csv");
 
         if (!File.Exists(path))
         {

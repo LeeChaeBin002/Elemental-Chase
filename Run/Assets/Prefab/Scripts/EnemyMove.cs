@@ -26,7 +26,10 @@ public class EnemyMove : MonoBehaviour
         if (other.CompareTag("Goal"))
         {
             isMoving = false; // 이동 멈추기
+            animator.SetInteger("animation", 34);
             Debug.Log("Enemy reached the goal and stopped.");
+
+            GameManager.Instance.ShowLoseUI();
         }
     }
 }

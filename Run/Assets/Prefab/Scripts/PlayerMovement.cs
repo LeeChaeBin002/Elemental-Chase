@@ -30,6 +30,7 @@ public class PlayerMovement : MonoBehaviour
     public Transform respawnPoint;
 
     private bool isDead = false;
+    private float invincibleTimer = 0f;
     void Start()
     {
         rb = GetComponent<UnityEngine.Rigidbody>();
@@ -44,6 +45,9 @@ public class PlayerMovement : MonoBehaviour
     }
     void Update()
     {
+        if (invincibleTimer > 0f)
+            invincibleTimer -= Time.deltaTime;
+
         if (isStunned) return;
 
         if (isDead) return;
@@ -111,7 +115,7 @@ public class PlayerMovement : MonoBehaviour
             // Run
             animator.SetInteger("animation", 18);
             if (!rb.isKinematic)
-                rb.velocity = moveInput.normalized * runSpeed;
+                rb.linearVelocity = moveInput.normalized * runSpeed;
 
             //  이동 방향으로 회전
             Quaternion targetRotation = Quaternion.LookRotation(moveInput, Vector3.up);
@@ -156,10 +160,10 @@ public class PlayerMovement : MonoBehaviour
     }
     void FixedUpdate()
     {
-        if (!isGrounded && rb.velocity.y < 0) // 공중 + 하강 중일 때
+        if (!isGrounded && rb.linearVelocity.y < 0) // 공중 + 하강 중일 때
         {
             // 중력 가속을 더해준다
-            rb.velocity += Vector3.up * Physics.gravity.y * (fallMultiplier - 1) * Time.fixedDeltaTime;
+            rb.linearVelocity += Vector3.up * Physics.gravity.y * (fallMultiplier - 1) * Time.fixedDeltaTime;
         }
     }
 
@@ -181,7 +185,7 @@ public class PlayerMovement : MonoBehaviour
 
         isDead = true;
         if (!rb.isKinematic)
-            rb.velocity = Vector3.zero;
+            rb.linearVelocity = Vector3.zero;
         rb.isKinematic = true;
 
         animator.SetTrigger("Die");
@@ -210,10 +214,10 @@ public class PlayerMovement : MonoBehaviour
         {
             pos.y = hit.point.y + 0.01f;
         }
-        transform.position = pos;
-
-        rb.linearVelocity = Vector3.zero;
-        rb.isKinematic = false;
+        rb.velocity = Vector3.zero;
+        rb.isKinematic = true;              // 물리 잠깐 끄기
+        rb.MovePosition(pos);               // ✅ transform.position 대신 이거!
+        StartCoroutine(ReenablePhysics());  //
 
         // Idle 상태로 되돌리기
         animator.ResetTrigger("Die");      // 트리거 초기화
@@ -221,6 +225,41 @@ public class PlayerMovement : MonoBehaviour
         animator.Play("Idle", 0, 0f);
 
         isDead = false;
+    }
+    public void RespawnAt(Transform respawnPoint)
+    {
+        Vector3 pos = respawnPoint.position + Vector3.up * 5f;
+        RaycastHit hit;
+
+        if (Physics.Raycast(pos, Vector3.down, out hit, 20f))
+        {
+            pos = hit.point + Vector3.up * 0.1f; // 바닥 위
+        }
+
+        rb.velocity = Vector3.zero;
+        rb.isKinematic = true;              // 물리 잠깐 끄기
+        rb.MovePosition(pos);               // ✅ 여기서도 MovePosition
+        StartCoroutine(ReenablePhysics());
+
+        animator.ResetTrigger("Die");
+        animator.SetInteger("animation", 34);
+        animator.Play("Idle", 0, 0f);
+
+        isDead = false;
+        // 무적 시간 1초 시작
+        invincibleTimer = 1f;
+    }
+    private IEnumerator ReenablePhysics()
+    {
+        yield return new WaitForFixedUpdate(); // 물리 프레임 한 번 기다린 뒤
+        rb.isKinematic = false;                // 다시 활성화
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (invincibleTimer > 0f)
+            return; // 무적 상태라면 충돌 무시
+
+        // 이후 충돌 처리 로직
     }
     public void ResetButtonState()
     {
