@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.UI;
 using static UnityEditor.PlayerSettings;
@@ -7,8 +8,11 @@ public class PlayerMovement : MonoBehaviour
 {
     public Animator animator;
 
-    public float runSpeed = 5f;
+    public float runSpeed = 10f;
+    public float laneOffset = 3f;
     public float jumpForce = 5f;
+    public float laneChangeSpeed = 10f;//레인 이동속도
+    
     private bool isStunned = false;
 
     public GameObject blindOverlay;
@@ -19,7 +23,10 @@ public class PlayerMovement : MonoBehaviour
     public float fallMultiplier = 2.5f; // 낙하 가속 배율
 
     //private float keyHoldTime = 0f;
-    private UnityEngine.Rigidbody rb; // 네임스페이스 확실히 지정
+    private UnityEngine.Rigidbody rb;
+    private int currentLane = 1;
+    private Vector3 targetPosition;
+
     private bool isGrounded = true;
     private bool hasJumped = false;
     private bool wasGrounded = false; // 이전 프레임의 바닥 상태
@@ -34,8 +41,8 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         rb = GetComponent<UnityEngine.Rigidbody>();
-        animator.SetInteger("animation", 34);
-
+        animator.SetInteger("animation", 18);
+        UpdateTargetPosition();
         jumpButton.onClick.AddListener(Jump);
 
         if (isDead)
@@ -45,96 +52,49 @@ public class PlayerMovement : MonoBehaviour
     }
     void Update()
     {
-        if (invincibleTimer > 0f)
-            invincibleTimer -= Time.deltaTime;
+        if (isDead || isStunned) return;
 
-        if (isStunned) return;
+        // 앞으로 전진 (z축 고정)
+        Vector3 forwardMove = Vector3.forward * runSpeed * Time.deltaTime;
+        rb.MovePosition(rb.position + forwardMove);
 
-        if (isDead) return;
+        // 좌우 레인 변경 (키보드 입력 예시: A=왼쪽, D=오른쪽)
+        if (Input.GetKeyDown(KeyCode.A))
+            ChangeLane(-1);
+        if (Input.GetKeyDown(KeyCode.D))
+            ChangeLane(1);
 
-        if (!isDead && transform.position.y < -5f)
-        {
-            Die();
-            return; // 더 이상 아래 코드 실행하지 않음
-        }
+        // 레인 보간 이동 (x축만 움직임)
+        Vector3 lanePos = new Vector3(targetPosition.x, rb.position.y, rb.position.z);
+        rb.position = Vector3.MoveTowards(rb.position, lanePos, laneChangeSpeed * Time.deltaTime);
 
-        // 바닥 체크
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, 1f);
+        // 애니메이션: 항상 달리는 상태
+        animator.SetInteger("animation", 18);
 
-        if (!isGrounded && !isFalling) // 땅에서 떨어짐 감지
-        {
-            rb.isKinematic = true;   // 물리 끄고
-            isFalling = true;        // 낙하시작
-        }
-        else if (isGrounded && isFalling) // 다시 땅에 닿았을 때
-        {
-            rb.isKinematic = false;  // 물리 다시 켜기
-            isFalling = false;       // 낙하 상태 해제
-        }
-
-        // 만약 낙하 중이면
-        if (isFalling)
-        {
-            transform.position += Vector3.down * fallSpeed * Time.deltaTime;
-
-        }
-
-       
         if (Input.GetKeyDown(KeyCode.K))
         {
             Die();
         }
       
 
-        // 이전 프레임 바닥 상태 저장
-        wasGrounded = isGrounded;
-        // 바닥 체크
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, 1f);
-        // 바닥 체크
-        //animator.SetBool("isGrounded", isGrounded);
-
-
-        // 착지했을 때 점프 상태 리셋
-        if (!wasGrounded && isGrounded)
-        {
-            hasJumped = false; // 착지하면 다시 점프 가능
-         
-        }
-        //조이스틱 입력값
-        Vector2 joyInput = joystick.Input;
-
-        // 입력값 
-        Vector3 moveInput = new Vector3(
-             Input.GetAxisRaw("Horizontal") + joyInput.x,
-            0,
-            Input.GetAxisRaw("Vertical") + joyInput.y
-        );
-
-        if (moveInput.magnitude > 0.1f)
-        {
-            // Run
-            animator.SetInteger("animation", 18);
-            if (!rb.isKinematic)
-                rb.linearVelocity = moveInput.normalized * runSpeed;
-
-            //  이동 방향으로 회전
-            Quaternion targetRotation = Quaternion.LookRotation(moveInput, Vector3.up);
-            transform.rotation = Quaternion.Slerp(
-                transform.rotation,       // 현재 회전
-                targetRotation,           // 목표 회전
-                Time.deltaTime * 10f      // 회전 속도
-                );
-        }
-        else
-        {
-            // Idle
-            animator.SetInteger("animation", 34);
-
-            if (!rb.isKinematic)
-                rb.linearVelocity = Vector3.zero;
-        }
-     
     }
+
+    void ChangeLane(int direction)
+    {
+        int newLane = Mathf.Clamp(currentLane + direction, 0, 2); // 0~2 범위 제한
+        if (newLane != currentLane)
+        {
+            currentLane = newLane;
+            UpdateTargetPosition();
+        }
+    }
+    void UpdateTargetPosition()
+    {
+        // 레인별 X 좌표 계산 (왼 -3, 중 0, 오 +3 같은 구조)
+        float xPos = (currentLane - 1) * laneOffset;
+        targetPosition = new Vector3(xPos, transform.position.y, transform.position.z);
+    }
+
     public void ApplyStun(float duration)//스턴지속
     {
         StartCoroutine(StunCoroutine(duration));
@@ -214,7 +174,7 @@ public class PlayerMovement : MonoBehaviour
         {
             pos.y = hit.point.y + 0.01f;
         }
-        rb.velocity = Vector3.zero;
+        rb.linearVelocity = Vector3.zero;
         rb.isKinematic = true;              // 물리 잠깐 끄기
         rb.MovePosition(pos);               // ✅ transform.position 대신 이거!
         StartCoroutine(ReenablePhysics());  //
@@ -236,7 +196,7 @@ public class PlayerMovement : MonoBehaviour
             pos = hit.point + Vector3.up * 0.1f; // 바닥 위
         }
 
-        rb.velocity = Vector3.zero;
+        rb.linearVelocity = Vector3.zero;
         rb.isKinematic = true;              // 물리 잠깐 끄기
         rb.MovePosition(pos);               // ✅ 여기서도 MovePosition
         StartCoroutine(ReenablePhysics());
