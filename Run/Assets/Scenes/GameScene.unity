@@ -990,7 +990,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.17818777, y: -0.00087174965, z: 0.00015786152, w: 0.98399615}
+  m_LocalRotation: {x: 0.1781878, y: -0.00073447736, z: 0.00013300346, w: 0.9839962}
   m_LocalPosition: {x: 0, y: 5.49, z: -8.08}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1873,7 +1873,7 @@ Transform:
   m_GameObject: {fileID: 693770676}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.77, y: 1.1, z: 63.67}
+  m_LocalPosition: {x: -3.7600048, y: 1.0959047, z: 73.68903}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2555,7 +2555,7 @@ GameObject:
   - component: {fileID: 886540094}
   m_Layer: 0
   m_Name: Plane
-  m_TagString: Untagged
+  m_TagString: Ground
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4555,7 +4555,7 @@ Transform:
   m_GameObject: {fileID: 1651127936}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -10.47, y: 1.1, z: 63.68}
+  m_LocalPosition: {x: -10.4449, y: 1.0949047, z: 73.68904}
   m_LocalScale: {x: 0.33040142, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4680,7 +4680,7 @@ MonoBehaviour:
   animator: {fileID: 1654240842}
   runSpeed: 10
   laneOffset: 3
-  jumpForce: 10
+  jumpForce: 8
   laneChangeSpeed: 10
   blindOverlay: {fileID: 850601408}
   joystick: {fileID: 0}
@@ -4909,7 +4909,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1704566472}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.17818776, y: -0.00087174954, z: 0.00015786149, w: 0.98399615}
+  m_LocalRotation: {x: 0.17818777, y: -0.00073447736, z: 0.00013300344, w: 0.9839963}
   m_LocalPosition: {x: 0, y: 5.49, z: -8.08}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

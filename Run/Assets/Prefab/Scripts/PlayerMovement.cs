@@ -132,13 +132,26 @@ public class PlayerMovement : MonoBehaviour
     void Jump()
     {
         if (isDead) return;
+
         if (isGrounded && !hasJumped)
             {
                 animator.SetTrigger("Jump");   // 애니메이션 실행
-               
-            }
+                                               // 기존 속도 초기화 후 위로 힘 주기
+                rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
+                rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+
+                isGrounded = false;
+                hasJumped = true;
+        }
     }
-  
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground")) // 바닥 오브젝트에 Ground 태그 지정
+        {
+            isGrounded = true;
+            hasJumped = false;
+        }
+    }
     void Die()
     {
         if (isDead) return;
