@@ -29,6 +29,8 @@ public class PlayerMovement : MonoBehaviour
 
     private bool isGrounded = true;
     private bool hasJumped = false;
+    private bool isBlocked = false;
+
    // private bool wasGrounded = false; // 이전 프레임의 바닥 상태
     
 
@@ -41,6 +43,8 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         rb = GetComponent<UnityEngine.Rigidbody>();
+
+        rb.freezeRotation = true;
         animator.SetInteger("animation", 18);
         UpdateTargetPosition();
         jumpButton.onClick.AddListener(Jump);
@@ -52,12 +56,6 @@ public class PlayerMovement : MonoBehaviour
     }
     void Update()
     {
-        if (isDead || isStunned) return;
-
-        // 앞으로 전진 (z축 고정)
-        Vector3 forwardMove = Vector3.forward * runSpeed * Time.deltaTime;
-        rb.MovePosition(rb.position + forwardMove);
-
         // 좌우 레인 변경 (키보드 입력 예시: A=왼쪽, D=오른쪽)
         if (Input.GetKeyDown(KeyCode.A))
             ChangeLane(-1);
@@ -78,6 +76,7 @@ public class PlayerMovement : MonoBehaviour
       
 
     }
+ 
 
     public void ChangeLane(int direction)
     {
@@ -118,14 +117,6 @@ public class PlayerMovement : MonoBehaviour
         yield return new WaitForSeconds(duration);
         if (blindOverlay != null) blindOverlay.SetActive(false);
     }
-    void FixedUpdate()
-    {
-        if (!isGrounded && rb.linearVelocity.y < 0) // 공중 + 하강 중일 때
-        {
-            // 중력 가속을 더해준다
-            rb.linearVelocity += Vector3.up * Physics.gravity.y * (fallMultiplier - 1) * Time.fixedDeltaTime;
-        }
-    }
 
 
 
@@ -134,22 +125,131 @@ public class PlayerMovement : MonoBehaviour
         if (isDead) return;
 
         if (isGrounded && !hasJumped)
-            {
-                animator.SetTrigger("Jump");   // 애니메이션 실행
-                                               // 기존 속도 초기화 후 위로 힘 주기
-                rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
-                rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+        {
+            animator.SetTrigger("Jump");
 
-                isGrounded = false;
-                hasJumped = true;
+            // 기본 점프 높이
+            float jumpHeight = 2.5f;
+
+            // 막혔을 때 더 높게 점프 (더 큰 보정값 적용)
+            if (isBlocked)
+            {
+                jumpHeight += 3.5f; // 기존 2.0f에서 3.5f로 증가
+                Debug.Log("High Jump Activated!"); // 디버깅용
+            }
+
+            float force = Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y);
+
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+            rb.AddForce(Vector3.up * force, ForceMode.Impulse);
+
+            isGrounded = false;
+            hasJumped = true;
+
+            // 점프 직후 추가 힘 적용 (막혔을 때만)
+            if (isBlocked)
+            {
+                StartCoroutine(ApplyExtraJumpForce());
+            }
+        }
+
+
+    }
+    // 점프 직후 추가 힘을 적용하는 코루틴
+    private IEnumerator ApplyExtraJumpForce()
+    {
+        yield return new WaitForFixedUpdate(); // 한 프레임 대기
+
+        // 추가 상승 힘 적용
+        if (!isGrounded && rb.linearVelocity.y > 0)
+        {
+            rb.AddForce(Vector3.up * jumpForce * 1.5f, ForceMode.Impulse);
         }
     }
-    private void OnCollisionEnter(Collision collision)
+
+
+
+    private void OnCollisionStay(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Ground")) // 바닥 오브젝트에 Ground 태그 지정
+        foreach (ContactPoint contact in collision.contacts)
         {
-            isGrounded = true;
-            hasJumped = false;
+            // 위쪽에서 닿으면 착지 처리
+            if (Vector3.Dot(contact.normal, Vector3.up) > 0.5f)
+            {
+                isGrounded = true;
+                hasJumped = false;
+            }
+        }
+    }
+    private void CheckBlocked()
+    {
+        RaycastHit hit;
+        Vector3 origin = transform.position + Vector3.up * 0.5f; // 캐릭터 중간 높이
+        if (Physics.Raycast(origin, Vector3.forward, out hit, 1.0f))
+        {
+            if (hit.collider.CompareTag("Obstacle"))
+            {
+                isBlocked = true;
+                return;
+            }
+        }
+        isBlocked = false;
+    }
+    void FixedUpdate()
+    {
+        if (isDead || isStunned) return;
+
+        // 앞으로 전진
+        rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, runSpeed);
+
+        // 좌우 이동
+        Vector3 lanePos = new Vector3(targetPosition.x, rb.position.y, rb.position.z);
+        rb.MovePosition(Vector3.MoveTowards(rb.position, lanePos, laneChangeSpeed * Time.fixedDeltaTime));
+
+        // 중력 가속 보정
+        if (!isGrounded && rb.linearVelocity.y < 0)
+        {
+            rb.linearVelocity += Vector3.up * Physics.gravity.y * (fallMultiplier - 1) * Time.fixedDeltaTime;
+        }
+
+        // 앞 막힘 체크
+        CheckBlocked();
+    }
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Obstacle"))
+        {
+            isBlocked = false;  // 막힘 해제
+            Debug.Log("Obstacle 막힘 해제!");
+        }
+        // 또는 태그 없이 일반적인 충돌체에서 벗어날 때도 해제
+        StartCoroutine(DelayedBlockCheck());
+    }
+    // 약간의 딜레이 후 블록 상태 재확인
+    private IEnumerator DelayedBlockCheck()
+    {
+        yield return new WaitForSeconds(0.1f);
+
+        // 주변에 장애물이 없으면 블록 해제
+        Collider[] nearbyColliders = Physics.OverlapSphere(transform.position, 1.5f);
+        bool hasNearbyObstacle = false;
+
+        foreach (Collider col in nearbyColliders)
+        {
+            if (col != GetComponent<Collider>() && !col.isTrigger)
+            {
+                Vector3 direction = (transform.position - col.transform.position).normalized;
+                if (Vector3.Dot(direction, Vector3.forward) < 0.3f)
+                {
+                    hasNearbyObstacle = true;
+                    break;
+                }
+            }
+        }
+
+        if (!hasNearbyObstacle)
+        {
+            isBlocked = false;
         }
     }
     void Die()

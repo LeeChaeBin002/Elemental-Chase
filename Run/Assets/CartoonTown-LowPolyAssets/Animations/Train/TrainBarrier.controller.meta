@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b428fe76a7c484311b094ac0413aa664
+timeCreated: 1476987582
+licenseType: Store
+NativeFormatImporter:
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 74020
+  packageName: Cartoon Town - Low Poly Assets
+  packageVersion: 1.4.2
+  assetPath: Assets/CartoonTown-LowPolyAssets/Animations/Train/TrainBarrier.controller
+  uploadId: 613715
