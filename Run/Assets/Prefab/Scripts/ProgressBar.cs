@@ -13,7 +13,12 @@ public class ProgressBar : MonoBehaviour
     private float goalEndZ;
     private float totalDistance;
     private float playerHalfDepth; // 플레이어 크기 보정
-
+    void OnEnable()
+    {
+       
+        if (slider != null)
+            slider.value = 0f;
+    }
     void Start()
     {
         startZ = startPoint.position.z;
@@ -41,14 +46,13 @@ public class ProgressBar : MonoBehaviour
         float traveled = playerFrontZ - startZ;
         float progress = Mathf.Clamp01(traveled / totalDistance);
 
-        slider.value = progress*100f;
+        slider.value = progress;
     }
     private void OnTriggerEnter(Collider other)
     {
         if (other == goalTrigger)
         {
-            // 골 트리거에 닿는 순간 강제로 100%
-            slider.value = 100f;
+            slider.value = 1f;
          
         }
     }
