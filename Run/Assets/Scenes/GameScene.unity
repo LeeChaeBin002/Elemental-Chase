@@ -4678,7 +4678,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 1654240842}
-  runSpeed: 5
+  runSpeed: 10
   laneOffset: 3
   jumpForce: 10
   laneChangeSpeed: 10
@@ -4966,7 +4966,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.5764706, g: 0.9137255, b: 0.6130687, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -5001,6 +5001,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1715305721}
   - component: {fileID: 1715305722}
+  - component: {fileID: 1715305723}
   m_Layer: 5
   m_Name: RunSlider
   m_TagString: Untagged
@@ -5076,10 +5077,26 @@ MonoBehaviour:
   m_MinValue: 0
   m_MaxValue: 1
   m_WholeNumbers: 0
-  m_Value: 1
+  m_Value: 0
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1715305723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1715305720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8780bbbd69a8f94392c4ed7485e02fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 1654240837}
+  startPoint: {fileID: 346471082}
+  goalTrigger: {fileID: 693770679}
+  slider: {fileID: 1715305722}
 --- !u!1 &1786364263
 GameObject:
   m_ObjectHideFlags: 0
