@@ -990,7 +990,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.1781878, y: -0.0007611732, z: 0.0001378377, w: 0.9839962}
+  m_LocalRotation: {x: 0.17818779, y: -0.0006643088, z: 0.00012029692, w: 0.9839963}
   m_LocalPosition: {x: 0, y: 5.49, z: -8.08}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4675,7 +4675,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 1654240842}
-  runSpeed: 3
+  runSpeed: 5
   laneOffset: 3
   jumpForce: 10
   laneChangeSpeed: 10
@@ -4894,7 +4894,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1704566472}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.17818777, y: -0.00076117314, z: 0.00013783769, w: 0.9839963}
+  m_LocalRotation: {x: 0.1781878, y: -0.0006643088, z: 0.00012029692, w: 0.9839963}
   m_LocalPosition: {x: 0, y: 5.49, z: -8.08}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

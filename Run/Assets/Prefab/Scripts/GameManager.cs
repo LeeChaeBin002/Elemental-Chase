@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded; // 중복 방지
 
         // 플레이어 찾아서 바닥 위로 보정
-        var player = FindObjectOfType<PlayerMovement>();
+        var player = FindAnyObjectByType<PlayerMovement>();
         var respawn = GameObject.FindWithTag("Respawn");
 
         if (player != null && respawn != null)

@@ -14,7 +14,7 @@ public class RewardUI : MonoBehaviour
     void Start()
     {
         gameObject.SetActive(false);
-        dataManager = FindObjectOfType<DataManager>();
+        dataManager = FindAnyObjectByType<DataManager>();
 
     }
 

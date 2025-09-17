@@ -29,11 +29,11 @@ public class PlayerMovement : MonoBehaviour
 
     private bool isGrounded = true;
     private bool hasJumped = false;
-    private bool wasGrounded = false; // 이전 프레임의 바닥 상태
+   // private bool wasGrounded = false; // 이전 프레임의 바닥 상태
     
 
     public float fallSpeed = 10f; // 낙하 속도
-    private bool isFalling = false;
+   // private bool isFalling = false;
     public Transform respawnPoint;
 
     private bool isDead = false;
