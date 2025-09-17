@@ -79,7 +79,7 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
-    void ChangeLane(int direction)
+    public void ChangeLane(int direction)
     {
         int newLane = Mathf.Clamp(currentLane + direction, 0, 2); // 0~2 범위 제한
         if (newLane != currentLane)
