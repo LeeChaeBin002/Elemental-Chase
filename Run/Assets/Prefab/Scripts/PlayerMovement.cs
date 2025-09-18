@@ -1,8 +1,6 @@
 ﻿using System.Collections;
-using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEditor.PlayerSettings;
 
 public class PlayerMovement : MonoBehaviour
 {

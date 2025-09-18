@@ -1,23 +1,44 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using TMPro;
 using UnityEngine;
-
+using UnityEngine.SceneManagement; // 씬 재시작용
+using UnityEngine.UI;
 
 public class RewardUI : MonoBehaviour
 {
     public GameObject rewardParent;      // UI 패널 (Canvas 안에 있음)
     public TextMeshProUGUI rewardText;  // 보상 텍스트 표시용
 
+    [Header("Buttons")]
+    public Button restartButton;
+    public Button exitButton;
+
     private DataManager dataManager;
+
+    [Header("Countdown UI")]
+    public TextMeshProUGUI countdownText;
 
     void Start()
     {
         gameObject.SetActive(false);
-        dataManager = FindAnyObjectByType<DataManager>();
+        dataManager = DataManager.Instance;
+
+        if (restartButton != null)
+            restartButton.onClick.AddListener(OnClickRestart);
+        if (exitButton != null)
+            exitButton.onClick.AddListener(OnClickExit);
 
     }
-
+    public void OnClickRestart()
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.Retry();
+        }
+    }
+    
     public void ShowReward()
     {
         if (dataManager == null) return;
@@ -68,6 +89,17 @@ public class RewardUI : MonoBehaviour
             }
         }
         rewardText.text = sb.ToString();
+    }
+    
+
+    // 🔹 종료 버튼
+    public void OnClickExit()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false; // 에디터에서 실행 중지
+#else
+        Application.Quit(); // 빌드된 게임 종료
+#endif
     }
 }
 

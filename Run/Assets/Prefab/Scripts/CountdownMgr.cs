@@ -1,39 +1,53 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿using JetBrains.Annotations;
 using System.Collections;
 using TMPro;
-using JetBrains.Annotations;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class CountdownMgr : MonoBehaviour
 {
     public TextMeshProUGUI countdownText;
     public GameObject gameplayUI;
 
-    public PlayerMovement player;   // PlayerMovement 스크립트 직접 참조
-    public EnemyMove enemy;
+    public PlayerMovement player;  
+    public EnemyMove[] enemies;    
 
+    private bool isCountingDown = false;
     void Start()
     {
+        // 게임 시작할 때 자동 카운트다운
+        BeginCountdown(false);
+    }
+    public void BeginCountdown(bool restartScene = false)
+    {
+        if (isCountingDown) return;
+        StartCoroutine(StartCountdown(restartScene));
+    }
+
+    IEnumerator StartCountdown(bool restartScene)
+    {
+        isCountingDown = true;
+
         if (gameplayUI != null) gameplayUI.SetActive(false);
 
-        // 움직임 스크립트 꺼두기
+        // 🔹 캐릭터/적 멈추기
         if (player != null)
         {
             player.enabled = false;
             player.animator.SetInteger("animation", 34); // Idle 강제
         }
 
-        if (enemy != null)
+        if (enemies != null)
         {
-            enemy.enabled = false;
-            enemy.animator.SetInteger("animation", 34); // Idle 강제
+            foreach (var e in enemies)
+            {
+                if (e == null) continue;
+                e.enabled = false;
+                e.animator.SetInteger("animation", 34); // Idle 강제
+            }
         }
 
-        StartCoroutine(StartCountdown());
-    }
-
-    IEnumerator StartCountdown()
-    {
         countdownText.gameObject.SetActive(true);
 
         int count = 3;
@@ -49,12 +63,28 @@ public class CountdownMgr : MonoBehaviour
 
         countdownText.gameObject.SetActive(false);
 
-        if (gameplayUI != null) gameplayUI.SetActive(true);
+        if (restartScene)
+        {
+            // 🔹 씬 리로드
+            isCountingDown = false;
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        }
+        else
+        {
+            if (gameplayUI != null) gameplayUI.SetActive(true);
 
-        // 움직임 다시 켜주기
-        if (player != null) player.enabled = true;
-        if (enemy != null) enemy.enabled = true;
+            // 🔹 캐릭터/적 다시 켜기
+            if (player != null) player.enabled = true;
+            if (enemies != null)
+            {
+                foreach (var e in enemies)
+                {
+                    if (e == null) continue;
+                    e.enabled = true;
+                }
+            }
+        }
 
-        Debug.Log("게임 시작!");
+        isCountingDown = false;
     }
 }

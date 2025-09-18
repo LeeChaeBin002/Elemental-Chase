@@ -5,6 +5,17 @@ public class Effect : MonoBehaviour
     public MapObject effectData;
     private float originalSpeed;
 
+    void Start()
+    {
+        if (effectData == null)
+        {
+            ObjectId objId = GetComponent<ObjectId>();
+            if (objId != null && ElementDataLoader.Instance != null)
+            {
+                //effectData = ElementDataLoader.Instance.GetMapObjectById(objId.id);
+            }
+        }
+    }
     void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
