@@ -121,9 +121,13 @@ public class PlayerMovement : MonoBehaviour
     void Jump()
     {
         if (isDead) return;
+        if (isDead || isStunned) return;
 
         if (isGrounded && !hasJumped)
         {
+            hasJumped = true;
+            isGrounded = false;
+
             animator.SetTrigger("Jump");
 
             // 기본 점프 높이
@@ -141,8 +145,7 @@ public class PlayerMovement : MonoBehaviour
             rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
             rb.AddForce(Vector3.up * force, ForceMode.Impulse);
 
-            isGrounded = false;
-            hasJumped = true;
+            
 
             // 점프 직후 추가 힘 적용 (막혔을 때만)
             if (isBlocked)
@@ -171,11 +174,12 @@ public class PlayerMovement : MonoBehaviour
     {
         foreach (ContactPoint contact in collision.contacts)
         {
-            // 위쪽에서 닿으면 착지 처리
-            if (Vector3.Dot(contact.normal, Vector3.up) > 0.5f)
+            // 위에서 닿았고, 실제로 거의 내려오는 중일 때만 착지 처리
+            if (Vector3.Dot(contact.normal, Vector3.up) > 0.7f && rb.linearVelocity.y <= 0.1f)
             {
                 isGrounded = true;
                 hasJumped = false;
+                return;
             }
         }
     }
@@ -309,7 +313,7 @@ public class PlayerMovement : MonoBehaviour
 
         rb.linearVelocity = Vector3.zero;
         rb.isKinematic = true;              // 물리 잠깐 끄기
-        rb.MovePosition(pos);               // ✅ 여기서도 MovePosition
+        rb.MovePosition(pos);               // 여기서도 MovePosition
         StartCoroutine(ReenablePhysics());
 
         animator.ResetTrigger("Die");
@@ -332,8 +336,5 @@ public class PlayerMovement : MonoBehaviour
 
         // 이후 충돌 처리 로직
     }
-    public void ResetButtonState()
-    {
-        //buttonPressed = false;
-    }
+   
 }
