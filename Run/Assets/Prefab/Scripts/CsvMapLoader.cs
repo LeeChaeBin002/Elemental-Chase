@@ -60,4 +60,16 @@ public class CsvMapLoader : MonoBehaviour
 
         }
     }
+
+    public MapObject GetMapObjectById(int id)
+    {
+        foreach (var obj in objects)
+        {
+            if (obj.id == id)
+                return obj;
+        }
+
+        Debug.LogWarning($"MapObject ID {id}를 찾을 수 없습니다!");
+        return null;
+    }
 }

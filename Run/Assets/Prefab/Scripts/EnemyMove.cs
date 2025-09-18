@@ -12,9 +12,7 @@ public class EnemyMove : MonoBehaviour
     private Renderer rend;
     private Material originalMaterial;
 
-
-    [Header("상태이상 재질")]
-    public Material slowMaterial;  
+    private Coroutine slowCoroutine;
 
 
     void Start()
@@ -56,8 +54,10 @@ public class EnemyMove : MonoBehaviour
     // 🔹 외부에서 불러쓸 “슬로우” 함수
     public void ApplySlow(float slowMultiplier, float duration)
     {
-        StopAllCoroutines(); // 이전 슬로우 효과가 있으면 초기화
-        StartCoroutine(SlowCoroutine(slowMultiplier, duration));
+        if (slowCoroutine != null)
+            StopCoroutine(slowCoroutine);
+
+        slowCoroutine = StartCoroutine(SlowCoroutine(slowMultiplier, duration));
     }
 
     private IEnumerator SlowCoroutine(float slowMultiplier, float duration)
@@ -65,8 +65,6 @@ public class EnemyMove : MonoBehaviour
         
         moveSpeed = originalSpeed * slowMultiplier; // 이속감소
 
-        if (rend != null)
-            rend.material = slowMaterial;
 
         yield return new WaitForSeconds(duration);
 

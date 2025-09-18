@@ -172,6 +172,7 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnCollisionStay(Collision collision)
     {
+        if (rb == null) return; // Rigidbody 없으면 무시
         foreach (ContactPoint contact in collision.contacts)
         {
             // 위에서 닿았고, 실제로 거의 내려오는 중일 때만 착지 처리

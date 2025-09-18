@@ -11,8 +11,8 @@ public class GameManager : MonoBehaviour
     public ElementDataLoader elementDataLoader;
     public CharacterData selectedCharacter;
 
-    public List<SkillData> skills => elementDataLoader.skills;
-    public List<SkillTreeData> skillTrees => elementDataLoader.skillTrees;
+   // public List<SkillData> skills => elementDataLoader.skills;
+   // public List<SkillTreeData> skillTrees => elementDataLoader.skillTrees;
     public List<CharacterData> characters => elementDataLoader.characters;
     void Awake()
     {
