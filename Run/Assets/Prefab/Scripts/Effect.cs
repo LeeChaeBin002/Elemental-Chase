@@ -4,6 +4,16 @@ public class Effect : MonoBehaviour
 {
     public MapObject effectData;
     private float originalSpeed;
+
+    [Header("이펙트 프리팹")]
+    public GameObject explosionEffectPrefab;
+
+    [Header("Fire Point")]
+    public Transform firePoint;   // 투사체가 발사될 위치
+
+    [Header("Prefabs")]
+    public GameObject projectilePrefab;
+
     void Awake()
     {
     
@@ -34,18 +44,21 @@ public class Effect : MonoBehaviour
                         pm.runSpeed *= 0.6f;//바위장애물 3초간 40% 이속 감소
                         break;
                     case 321060: // 물폭탄 : 닿으면 몬스터 이속 60% 감소(3초)
-                    
+
                     EnemyMove[] enemies = FindObjectsOfType<EnemyMove>();
-                    Debug.Log($"충돌 발생: {effectData.buffId}");
                     foreach (var enemy in enemies)
                     {
                         if (enemy != null)
                         {
-                            enemy.ApplySlow(0.4f, 3f); // 40% 속도만 유지 (즉 60% 감소)
+                            Debug.Log($"[물폭탄 발동] {enemy.name} 3초간 이속 60% 감소");
+                            enemy.ApplySlow(0.4f, 3f);
                         }
                     }
 
-                    Destroy(gameObject); // 물폭탄 아이템은 사용 후 사라짐
+                    // 🔹 여기서 물폭탄 이펙트 한번만 생성 가능
+                    Instantiate(explosionEffectPrefab, transform.position, Quaternion.identity);
+
+                    Destroy(gameObject); // 아이템 삭제
                     break;
 
                 case 311060: // 바람통로 : 닿는 동안 이속 60% 증가
@@ -90,6 +103,34 @@ public class Effect : MonoBehaviour
         pm.runSpeed = originalSpeed;
 
         Debug.Log($"{effectData.name} 효과 종료 → 속도 복구");
+    }
+    void ShootAtNearestEnemy(PlayerMovement player)
+    {
+        EnemyMove[] enemies = FindObjectsOfType<EnemyMove>();
+        EnemyMove nearest = null;
+        float minDist = Mathf.Infinity;
+
+        foreach (EnemyMove enemy in enemies)
+        {
+            float dist = Vector3.Distance(player.transform.position, enemy.transform.position);
+            if (dist < minDist)
+            {
+                minDist = dist;
+                nearest = enemy;
+            }
+        }
+
+        if (nearest != null && projectilePrefab != null)
+        {
+            Vector3 spawnPos = firePoint != null ? firePoint.position : player.transform.position;
+            GameObject proj = Instantiate(projectilePrefab, spawnPos, Quaternion.identity);
+
+            Projectile p = proj.GetComponent<Projectile>();
+            if (p != null)
+            {
+                p.SetTarget(nearest.transform); // 🔹 타겟 Transform 전달
+            }
+        }
     }
 }
 
