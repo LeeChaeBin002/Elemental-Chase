@@ -2570,7 +2570,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.17818779, y: -0.0007000248, z: 0.00012676457, w: 0.9839963}
+  m_LocalRotation: {x: 0.17818779, y: -0.0007021535, z: 0.00012715007, w: 0.9839963}
   m_LocalPosition: {x: 0, y: 5.49, z: -8.08}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2702,6 +2702,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 331878524}
   moveSpeed: 7
+  slowMaterial: {fileID: 0}
 --- !u!54 &331878527
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -6146,7 +6147,7 @@ GameObject:
   m_Component:
   - component: {fileID: 827720388}
   m_Layer: 0
-  m_Name: Water
+  m_Name: WaterBoom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6160,8 +6161,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 827720387}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.5788684, y: 7.155051, z: 1.5579274}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -15.269331, y: 11.702164, z: -46.301903}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -6170,7 +6171,7 @@ Transform:
   - {fileID: 1019495722}
   - {fileID: 1571935929}
   - {fileID: 1629380738}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 941955504}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &829888138 stripped
 Transform:
@@ -7147,6 +7148,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 827720388}
   - {fileID: 765585042}
   - {fileID: 1118692737}
   m_Father: {fileID: 0}
@@ -8546,6 +8548,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 1061336289}
   moveSpeed: 7
+  slowMaterial: {fileID: 0}
 --- !u!1001 &1069060849
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11188,6 +11191,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 1590557687}
   moveSpeed: 8
+  slowMaterial: {fileID: 2100000, guid: 6287a062b6b401d4d9ded155bac30b71, type: 2}
 --- !u!95 &1590557687 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 2878772426701375066, guid: 87487c81f6ebae841aab7adaf53c861c, type: 3}
@@ -11885,7 +11889,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1704566472}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.17818779, y: -0.0007000248, z: 0.00012676457, w: 0.9839963}
+  m_LocalRotation: {x: 0.17818779, y: -0.0007021535, z: 0.00012715007, w: 0.9839963}
   m_LocalPosition: {x: 0, y: 5.49, z: -8.08}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -12482,7 +12486,7 @@ GameObject:
   - component: {fileID: 1786364264}
   m_Layer: 0
   m_Name: Enemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -14678,18 +14682,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 827720388}
     m_Modifications:
     - target: {fileID: 1199944957264003849, guid: f7dc614486d566a47b86c18e2401e91c, type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1199944957264003849, guid: f7dc614486d566a47b86c18e2401e91c, type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1199944957264003849, guid: f7dc614486d566a47b86c18e2401e91c, type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1199944957264003849, guid: f7dc614486d566a47b86c18e2401e91c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 9.528869
       objectReference: {fileID: 0}
@@ -15064,4 +15056,3 @@ SceneRoots:
   - {fileID: 1244981674}
   - {fileID: 941955504}
   - {fileID: 89910177}
-  - {fileID: 827720388}

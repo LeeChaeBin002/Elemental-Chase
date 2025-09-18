@@ -29,8 +29,10 @@ public class Effect : MonoBehaviour
                         pm.runSpeed *= 0.6f;//바위장애물 3초간 40% 이속 감소
                         break;
                     case 321060: // 물폭탄 : 닿으면 몬스터 이속 60% 감소(3초)
-                        //pm.runSpeed *= 0.4f;
-                       break;
+                        ApplyWaterBomb();
+                        Destroy(gameObject);
+                    break;
+                       
                     case 311060: // 바람통로 : 닿는 동안 이속 60% 증가
                         pm.runSpeed *= 1.6f;
                         break;
@@ -70,6 +72,24 @@ public class Effect : MonoBehaviour
         pm.runSpeed = originalSpeed;
 
         Debug.Log($"{effectData.name} 효과 종료 → 속도 복구");
+    }
+
+    private void ApplyWaterBomb()
+    {
+        float radius = 5f;
+        float slowMultiplier = 0.4f;
+        float duration = 3f;
+
+        Collider[] hits = Physics.OverlapSphere(transform.position, radius);
+        foreach (Collider hit in hits)
+        {
+            EnemyMove enemy = hit.GetComponent<EnemyMove>();
+            if (enemy != null)
+            {
+                enemy.ApplySlow(slowMultiplier, duration);
+                Debug.Log($"물폭탄 효과: {enemy.name} 60퍼 이속 감소 ");
+            }
+        }
     }
 }
 
