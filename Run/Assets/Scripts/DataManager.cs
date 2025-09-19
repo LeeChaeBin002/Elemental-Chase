@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 
 public class DataManager : MonoBehaviour
 {
+    public TextAsset rewardCsv; // Inspector 할당 안해도 됨
+    public TextAsset scoreCsv;
 
     public List<RewardData> rewards;
     public List<ScoreData> scores;
@@ -22,45 +23,21 @@ public class DataManager : MonoBehaviour
             Destroy(gameObject); // 중복 생기면 제거
             return;
         }
-        // ✅ CSV 파일 로드 (StreamingAssets 기준)
-        string rewardPath = Path.Combine(Application.streamingAssetsPath, "CSV/Reward.csv");
-        string scorePath = Path.Combine(Application.streamingAssetsPath, "CSV/Score.csv");
-        
-        rewards = CsvRewardLoader.LoadRewards(LoadCsvText(rewardPath));
-        scores = CsvRewardLoader.LoadScores(LoadCsvText(scorePath));
+
+        // 🔑 Inspector에서 안넣으면 Resources에서 자동 로드
+        if (rewardCsv == null)
+            rewardCsv = Resources.Load<TextAsset>("CSV/RewardTable");
+        if (scoreCsv == null)
+            scoreCsv = Resources.Load<TextAsset>("CSV/ScoreTable");
+        if (rewardCsv == null || scoreCsv == null)
+        {
+            Debug.LogError("CSV 파일을 불러오지 못했습니다. Resources/CSV 경로 확인하세요!");
+            return;
+        }
+        rewards = CsvRewardLoader.LoadRewards(rewardCsv);
+        scores = CsvRewardLoader.LoadScores(scoreCsv);
+
 
         Debug.Log($"보상 {rewards.Count}개, 스코어 {scores.Count}개 불러옴");
     }
-    /// <summary>
-    /// StreamingAssets에서 CSV 내용을 string으로 읽음
-    /// </summary>
-    private string LoadCsvText(string path)
-    {
-#if UNITY_ANDROID && !UNITY_EDITOR
-        // ✅ Android 빌드는 UnityWebRequest 필요
-        using (var www = UnityEngine.Networking.UnityWebRequest.Get(path))
-        {
-            www.SendWebRequest();
-            while (!www.isDone) { }
-            if (www.result == UnityEngine.Networking.UnityWebRequest.Result.Success)
-                return www.downloadHandler.text;
-            else
-            {
-                Debug.LogError($"CSV 로드 실패: {path}, 에러: {www.error}");
-                return "";
-            }
-        }
-#else
-        if (File.Exists(path))
-        {
-            return File.ReadAllText(path);
-        }
-        else
-        {
-            Debug.LogError($"CSV 파일을 찾을 수 없습니다: {path}");
-            return "";
-        }
-#endif
-    }
 }
-

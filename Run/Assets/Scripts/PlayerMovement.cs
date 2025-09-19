@@ -28,12 +28,9 @@ public class PlayerMovement : MonoBehaviour
     private bool isGrounded = true;
     private bool hasJumped = false;
     private bool isBlocked = false;
-
-   // private bool wasGrounded = false; // 이전 프레임의 바닥 상태
     
 
     public float fallSpeed = 10f; // 낙하 속도
-   // private bool isFalling = false;
     public Transform respawnPoint;
 
     private bool isDead = false;
@@ -292,7 +289,7 @@ public class PlayerMovement : MonoBehaviour
         }
         rb.linearVelocity = Vector3.zero;
         rb.isKinematic = true;              // 물리 잠깐 끄기
-        rb.MovePosition(pos);               // ✅ transform.position 대신 이거!
+        rb.MovePosition(pos);               // transform.position 대신 이거!
         StartCoroutine(ReenablePhysics());  //
 
         // Idle 상태로 되돌리기
@@ -335,7 +332,6 @@ public class PlayerMovement : MonoBehaviour
         if (invincibleTimer > 0f)
             return; // 무적 상태라면 충돌 무시
 
-        // 이후 충돌 처리 로직
     }
    
 }
