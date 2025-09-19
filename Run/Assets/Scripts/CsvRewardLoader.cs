@@ -98,7 +98,17 @@ public static class CsvRewardLoader
 
         return value; // string
     }
+    public static List<RewardData> LoadRewards(string csvText)
+    {
+        TextAsset temp = new TextAsset(csvText);
+        return LoadRewards(temp);
+    }
 
+    public static List<ScoreData> LoadScores(string csvText)
+    {
+        TextAsset temp = new TextAsset(csvText);
+        return LoadScores(temp);
+    }
     public static List<RewardData> LoadRewards(TextAsset csv) =>
         LoadCSV<RewardData>(csv, rewardHeaderMap);
     public static List<ScoreData> LoadScores(TextAsset csv) =>
