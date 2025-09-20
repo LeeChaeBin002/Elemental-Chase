@@ -7,6 +7,8 @@ public class PlayerMovement : MonoBehaviour
     public Animator animator;
 
     public float runSpeed = 10f;
+    private float baseSpeed;
+    private int slowCount = 0;
     public float laneOffset = 3f;
     public float jumpForce = 5f;
     public float laneChangeSpeed = 10f;//레인 이동속도
@@ -38,7 +40,7 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         rb = GetComponent<UnityEngine.Rigidbody>();
-
+        baseSpeed = runSpeed;
         rb.freezeRotation = true;
         animator.SetInteger("animation", 18);
         UpdateTargetPosition();
@@ -49,7 +51,41 @@ public class PlayerMovement : MonoBehaviour
             RespawnInstant();
         }
     }
-    void Update()
+    public void ApplySlow(float multiplier)
+    {
+        slowCount++;
+        runSpeed = baseSpeed * multiplier;
+        Debug.Log($"[슬로우 적용] {multiplier * 100}% 속도로 변경 (현재 겹침 {slowCount})");
+    }
+
+    public void RemoveSlow()
+    {
+        slowCount = Mathf.Max(0, slowCount - 1);
+
+        if (slowCount == 0)
+        {
+            runSpeed = baseSpeed; // 완전히 빠져나왔을 때만 복구
+            Debug.Log("[슬로우 종료] 기본 속도로 복구");
+        }
+        else
+        {
+            Debug.Log($"[슬로우 유지] 아직 {slowCount}개 안에 있음");
+        }
+    }
+
+    public void ApplyBuff(float multiplier)
+    {
+        runSpeed = baseSpeed * multiplier;
+        Debug.Log($"[버프 적용] {multiplier * 100}% 속도로 변경");
+    }
+
+    public void RemoveBuff()
+    {
+        runSpeed = baseSpeed;
+        Debug.Log("[버프 종료] 기본 속도로 복구");
+    }
+
+void Update()
     {
         // 좌우 레인 변경 (키보드 입력 예시: A=왼쪽, D=오른쪽)
         if (Input.GetKeyDown(KeyCode.A))
@@ -120,35 +156,33 @@ public class PlayerMovement : MonoBehaviour
         if (isDead) return;
         if (isDead || isStunned) return;
 
-        if (isGrounded && !hasJumped)
+        if (!hasJumped && (isGrounded || isBlocked))
         {
             hasJumped = true;
             isGrounded = false;
 
             animator.SetTrigger("Jump");
 
-            // 기본 점프 높이
-            float jumpHeight = 2.5f;
-
-            // 막혔을 때 더 높게 점프 (더 큰 보정값 적용)
-            if (isBlocked)
-            {
-                jumpHeight += 3.5f; // 기존 2.0f에서 3.5f로 증가
-                Debug.Log("High Jump Activated!"); // 디버깅용
-            }
-
-            float force = Mathf.Sqrt(jumpHeight * -2f * Physics.gravity.y);
-
-            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-            rb.AddForce(Vector3.up * force, ForceMode.Impulse);
+            // 기본 점프 힘
+            float force = jumpForce;
 
             
 
-            // 점프 직후 추가 힘 적용 (막혔을 때만)
             if (isBlocked)
             {
-                StartCoroutine(ApplyExtraJumpForce());
+                // Scale.y = 1 → 높이 1m 장애물
+                float requiredJump = Mathf.Sqrt(2 * Mathf.Abs(Physics.gravity.y) * 1.3f);
+                force = Mathf.Max(force, requiredJump); // 최소 4.5 이상 보정
+                Debug.Log($" 장애물 앞 점프! force={force}");
             }
+            else
+            {
+                Debug.Log(" 일반 점프!!");
+            }
+
+            // y속도 초기화 후 점프
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+            rb.AddForce(Vector3.up * force, ForceMode.Impulse);
         }
 
 
@@ -161,7 +195,7 @@ public class PlayerMovement : MonoBehaviour
         // 추가 상승 힘 적용
         if (!isGrounded && rb.linearVelocity.y > 0)
         {
-            rb.AddForce(Vector3.up * jumpForce * 1.5f, ForceMode.Impulse);
+            rb.AddForce(Vector3.up * (jumpForce * 0.5f), ForceMode.Impulse);
         }
     }
 
@@ -199,8 +233,13 @@ public class PlayerMovement : MonoBehaviour
     {
         if (isDead || isStunned) return;
 
+        //rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, runSpeed);
+
         // 앞으로 전진
-        rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, runSpeed);
+        Vector3 vel = rb.linearVelocity;
+        vel.z = runSpeed;   // 앞으로만 강제
+        vel.x = 0;          // 좌우는 레인 이동으로 제어
+        rb.linearVelocity = vel; // y는 그대로 유지 (점프 값 살림)
 
         // 좌우 이동
         Vector3 lanePos = new Vector3(targetPosition.x, rb.position.y, rb.position.z);

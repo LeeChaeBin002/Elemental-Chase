@@ -36,12 +36,10 @@ public class Effect : MonoBehaviour
                 switch (effectData.buffId)
                 {
                     case 324020:
-                        originalSpeed = pm.runSpeed;
-                        pm.runSpeed *= 0.2f;//진흙구덩이 20% 이속 감소->80% 변경(테스트)
+                        pm.ApplySlow(0.2f); //20->80% 이속 감소변경(테스트)
                         break;
                     case 324040:
-                        originalSpeed = pm.runSpeed;
-                        pm.runSpeed *= 0.6f;//바위장애물 3초간 40% 이속 감소
+                        pm.ApplySlow(0.6f); //바위장애물 3초간 40% 이속 감소
                         break;
                     case 321060: // 물폭탄 : 닿으면 몬스터 이속 60% 감소(3초)
 
@@ -55,15 +53,12 @@ public class Effect : MonoBehaviour
                         }
                     }
 
-                    // 🔹 여기서 물폭탄 이펙트 한번만 생성 가능
-                    //Instantiate(explosionEffectPrefab, transform.position, Quaternion.identity);
-
+                    
                     Destroy(gameObject); // 아이템 삭제
                     break;
 
                 case 311060: // 바람통로 : 닿는 동안 이속 60% 증가
-                        originalSpeed = pm.runSpeed;
-                        pm.runSpeed *= 1.6f;
+                        pm.ApplyBuff(1.6f);
                         break;
                
 
@@ -99,8 +94,17 @@ public class Effect : MonoBehaviour
         PlayerMovement pm = other.GetComponent<PlayerMovement>();
         if (pm == null) return;
 
-        // 효과 끝났을 때 속도 원래대로 복구
-        pm.runSpeed = originalSpeed;
+        switch (effectData.buffId)
+        {
+            case 324020: // 진흙
+            case 324040: // 바위
+                pm.RemoveSlow();
+                break;
+
+            case 311060: // 바람통로
+                pm.RemoveBuff();
+                break;
+        }
 
         Debug.Log($"{effectData.name} 효과 종료 → 속도 복구");
     }

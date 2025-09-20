@@ -1208,7 +1208,7 @@ GameObject:
   - component: {fileID: 117871718}
   m_Layer: 0
   m_Name: tree trunk (3)
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1804,7 +1804,7 @@ GameObject:
   - component: {fileID: 164340642}
   m_Layer: 0
   m_Name: Floor_Grass (14)
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2544,7 +2544,7 @@ GameObject:
   - component: {fileID: 243471597}
   m_Layer: 0
   m_Name: Floor_Grass_Slope (4)
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4099,7 +4099,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.1781878, y: -0.000636234, z: 0.00011521296, w: 0.98399633}
+  m_LocalRotation: {x: 0.17818776, y: -0.00086129963, z: 0.00015596916, w: 0.98399615}
   m_LocalPosition: {x: 0, y: 5.49, z: -8.08}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4642,7 +4642,7 @@ GameObject:
   - component: {fileID: 360012811}
   m_Layer: 0
   m_Name: Floor_Grass (18)
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4755,7 +4755,7 @@ GameObject:
   - component: {fileID: 379855942}
   m_Layer: 0
   m_Name: Floor_Grass (20)
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7177,7 +7177,7 @@ GameObject:
   - component: {fileID: 580637456}
   m_Layer: 0
   m_Name: Floor_Grass (11)
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7691,7 +7691,7 @@ GameObject:
   - component: {fileID: 660513052}
   m_Layer: 0
   m_Name: Floor_Grass (6)
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -8792,7 +8792,7 @@ GameObject:
   - component: {fileID: 765643915}
   m_Layer: 0
   m_Name: Floor_Grass (24)
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -8900,7 +8900,7 @@ GameObject:
   - component: {fileID: 766867758}
   m_Layer: 0
   m_Name: Floor_Grass (9)
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -11481,7 +11481,7 @@ GameObject:
   - component: {fileID: 908601161}
   m_Layer: 0
   m_Name: Floor_Grass (5)
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -11604,7 +11604,7 @@ GameObject:
   - component: {fileID: 919197330}
   m_Layer: 0
   m_Name: Floor_Grass (23)
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -11712,7 +11712,7 @@ GameObject:
   - component: {fileID: 920726431}
   m_Layer: 0
   m_Name: Floor_Grass (12)
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -14790,7 +14790,7 @@ GameObject:
   - component: {fileID: 1129356982}
   m_Layer: 0
   m_Name: tree trunk (2)
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -14903,7 +14903,7 @@ GameObject:
   - component: {fileID: 1138356899}
   m_Layer: 0
   m_Name: Floor_Grass (7)
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -15725,7 +15725,7 @@ GameObject:
   - component: {fileID: 1256239548}
   m_Layer: 0
   m_Name: Floor_Grass (13)
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -15895,7 +15895,7 @@ GameObject:
   - component: {fileID: 1268344497}
   m_Layer: 0
   m_Name: Floor_Grass (21)
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -16564,7 +16564,7 @@ GameObject:
   - component: {fileID: 1346692582}
   m_Layer: 0
   m_Name: Floor_Grass (4)
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -17074,7 +17074,7 @@ GameObject:
   - component: {fileID: 1441511560}
   m_Layer: 0
   m_Name: Floor_Grass (8)
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -17957,7 +17957,7 @@ GameObject:
   - component: {fileID: 1568774386}
   m_Layer: 0
   m_Name: Floor_Grass (10)
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -19171,7 +19171,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1704566472}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.17818779, y: -0.00063623395, z: 0.00011521291, w: 0.98399633}
+  m_LocalRotation: {x: 0.17818774, y: -0.0008612995, z: 0.00015596913, w: 0.98399615}
   m_LocalPosition: {x: 0, y: 5.49, z: -8.08}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -20486,7 +20486,7 @@ GameObject:
   - component: {fileID: 1807801506}
   m_Layer: 0
   m_Name: Floor_Grass (25)
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -22591,7 +22591,7 @@ GameObject:
   - component: {fileID: 2017665008}
   m_Layer: 0
   m_Name: Floor_Grass (22)
-  m_TagString: Untagged
+  m_TagString: Obstacle
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
