@@ -37,7 +37,7 @@ public class Effect : MonoBehaviour
                 {
                     case 324020:
                         originalSpeed = pm.runSpeed;
-                        pm.runSpeed *= 0.8f;//진흙구덩이 20% 이속 감소
+                        pm.runSpeed *= 0.2f;//진흙구덩이 20% 이속 감소->80% 변경(테스트)
                         break;
                     case 324040:
                         originalSpeed = pm.runSpeed;
