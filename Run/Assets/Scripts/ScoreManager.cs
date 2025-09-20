@@ -9,11 +9,13 @@ public class ScoreManager : MonoBehaviour
     public int score = 0;       // 점수
     public int coinCount = 0;   // 코인 개수 카운트
 
-  
+
+    public TextMeshProUGUI coinText;
     public TextMeshProUGUI scoreText; // UI 텍스트 연결 (예: "Score : 0")
 
     private float timeCounter = 0f;
     public int distanceScoreRate = 1;//거리 초당 점수
+    public int coinScoreValue = 5;    // 코인 하나당 점수
     void Awake()
     {
         if (instance == null) instance = this;
@@ -31,20 +33,24 @@ public class ScoreManager : MonoBehaviour
             timeCounter -= 1f; // 잔여 시간 보존
         }
     }
-
-    public void AddScore(int value)
+    // 🔹 코인 획득 처리
+    public void AddCoin()
     {
-        score += value;
-        coinCount++;
+        coinCount++;               // 코인 개수 +1
+        score += coinScoreValue;   // 점수 +5
         UpdateUI();
     }
-
+  
     private void UpdateUI()
     {
      
         if (scoreText != null)
         {
             scoreText.text = "Score : " + score;
+        }
+        if (coinText != null)
+        {
+            coinText.text = "Coin: "+ coinCount;
         }
     }
 }

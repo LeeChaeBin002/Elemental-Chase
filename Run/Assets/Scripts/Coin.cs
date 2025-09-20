@@ -18,7 +18,7 @@ public class Coin : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             // ScoreManager에 점수 추가
-            ScoreManager.instance.AddScore(scoreValue);
+            ScoreManager.instance.AddCoin();
 
             // 코인 제거
             Destroy(gameObject);
