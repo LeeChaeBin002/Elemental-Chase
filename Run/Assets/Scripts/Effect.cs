@@ -38,9 +38,7 @@ public class Effect : MonoBehaviour
                     case 324020:
                         pm.ApplySlow(0.2f); //20->80% 이속 감소변경(테스트)
                         break;
-                    case 324040:
-                        pm.ApplySlow(0.6f); //바위장애물 3초간 40% 이속 감소
-                        break;
+                   
                     case 321060: // 물폭탄 : 닿으면 몬스터 이속 60% 감소(3초)
 
                     EnemyMove[] enemies = FindObjectsOfType<EnemyMove>();
@@ -89,15 +87,13 @@ public class Effect : MonoBehaviour
     {
         if (!other.CompareTag("Player")) return;
         if (effectData == null) return;
-        if (effectData.buffId == 321060)
-            return;
+    
         PlayerMovement pm = other.GetComponent<PlayerMovement>();
         if (pm == null) return;
 
         switch (effectData.buffId)
         {
-            case 324020: // 진흙
-            case 324040: // 바위
+            case 324020: // 진흙 구덩이
                 pm.RemoveSlow();
                 break;
 
@@ -108,34 +104,22 @@ public class Effect : MonoBehaviour
 
         Debug.Log($"{effectData.name} 효과 종료 → 속도 복구");
     }
-    void ShootAtNearestEnemy(PlayerMovement player)
+    private void OnCollisionEnter(Collision collision)
     {
-        EnemyMove[] enemies = FindObjectsOfType<EnemyMove>();
-        EnemyMove nearest = null;
-        float minDist = Mathf.Infinity;
+        if (!collision.gameObject.CompareTag("Player")) return;
+        if (effectData == null) return;
 
-        foreach (EnemyMove enemy in enemies)
+        PlayerMovement pm = collision.gameObject.GetComponent<PlayerMovement>();
+        if (pm == null) return;
+
+        if (effectData.buffId == 324040) // 바위 (충돌형 → 3초간 느려짐)
         {
-            float dist = Vector3.Distance(player.transform.position, enemy.transform.position);
-            if (dist < minDist)
-            {
-                minDist = dist;
-                nearest = enemy;
-            }
+            pm.ApplyTimedSlow(0.6f, 3f);
+            Debug.Log("바위 충돌 → 3초간 40% 감속");
         }
-
-        //if (nearest != null && projectilePrefab != null)
-        //{
-        //    Vector3 spawnPos = firePoint != null ? firePoint.position : player.transform.position;
-        //    GameObject proj = Instantiate(projectilePrefab, spawnPos, Quaternion.identity);
-
-        //    Projectile p = proj.GetComponent<Projectile>();
-        //    if (p != null)
-        //    {
-        //        p.SetTarget(nearest.transform); // 🔹 타겟 Transform 전달
-        //    }
-        //}
     }
+
 }
+
 
 

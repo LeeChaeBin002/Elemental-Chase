@@ -53,24 +53,31 @@ public class PlayerMovement : MonoBehaviour
     }
     public void ApplySlow(float multiplier)
     {
-        slowCount++;
+        //slowCount++;
         runSpeed = baseSpeed * multiplier;
-        Debug.Log($"[슬로우 적용] {multiplier * 100}% 속도로 변경 (현재 겹침 {slowCount})");
+        Debug.Log($"[슬로우 적용] {multiplier * 100}% 속도로 변경");
     }
 
     public void RemoveSlow()
     {
-        slowCount = Mathf.Max(0, slowCount - 1);
+        runSpeed = baseSpeed;
+        Debug.Log("[슬로우 종료] 기본 속도로 복구");
+    }
+    // 🔹 일정 시간 후 자동 해제되는 슬로우 (바위 같은 경우)
+    public void ApplyTimedSlow(float multiplier, float duration)
+    {
+        StopCoroutine(nameof(TimedSlowCoroutine)); // 중복 방지
+        StartCoroutine(TimedSlowCoroutine(multiplier, duration));
+    }
+    private IEnumerator TimedSlowCoroutine(float multiplier, float duration)
+    {
+        runSpeed = baseSpeed * multiplier;
+        Debug.Log($"[슬로우 적용] {multiplier * 100}% 속도로 변경 ({duration}초)");
 
-        if (slowCount == 0)
-        {
-            runSpeed = baseSpeed; // 완전히 빠져나왔을 때만 복구
-            Debug.Log("[슬로우 종료] 기본 속도로 복구");
-        }
-        else
-        {
-            Debug.Log($"[슬로우 유지] 아직 {slowCount}개 안에 있음");
-        }
+        yield return new WaitForSeconds(duration);
+
+        runSpeed = baseSpeed;
+        Debug.Log("[슬로우 자동 종료] 기본 속도로 복구");
     }
 
     public void ApplyBuff(float multiplier)
