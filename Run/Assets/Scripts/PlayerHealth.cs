@@ -49,7 +49,7 @@ public class PlayerHealth : MonoBehaviour
         currentHp -= amount;
         currentHp = Mathf.Max(currentHp, 0);
 
-        Debug.Log($"플레이어가 {amount} 피해를 입음. 현재 체력: {currentHp}/{maxHp}");
+        Debug.Log($"적 플레이어가 {amount} 피해를 입음. 현재 체력: {currentHp}/{maxHp}");
 
         UpdateUI();
 
