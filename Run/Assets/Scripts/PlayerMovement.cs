@@ -13,6 +13,7 @@ public class PlayerMovement : MonoBehaviour
     public float jumpForce = 5f;
     public float laneChangeSpeed = 10f;//레인 이동속도
     
+    
     private bool isStunned = false;
 
     public GameObject blindOverlay;
@@ -37,6 +38,11 @@ public class PlayerMovement : MonoBehaviour
 
     private bool isDead = false;
     private float invincibleTimer = 0f;
+
+    public GameObject buffEffectPrefab;   // 버프 이펙트
+    public GameObject debuffEffectPrefab;
+
+    private GameObject activeEffect;
     void Start()
     {
         rb = GetComponent<UnityEngine.Rigidbody>();
@@ -55,11 +61,14 @@ public class PlayerMovement : MonoBehaviour
     {
         //slowCount++;
         runSpeed = baseSpeed * multiplier;
+        PlayEffect(debuffEffectPrefab);
         Debug.Log($"[슬로우 적용] {multiplier * 100}% 속도로 변경");
+
     }
 
     public void RemoveSlow()
     {
+        StopEffect();
         runSpeed = baseSpeed;
         Debug.Log("[슬로우 종료] 기본 속도로 복구");
     }
@@ -72,27 +81,51 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator TimedSlowCoroutine(float multiplier, float duration)
     {
         runSpeed = baseSpeed * multiplier;
+        PlayEffect(debuffEffectPrefab);
         Debug.Log($"[슬로우 적용] {multiplier * 100}% 속도로 변경 ({duration}초)");
 
         yield return new WaitForSeconds(duration);
 
+        StopEffect();
         runSpeed = baseSpeed;
         Debug.Log("[슬로우 자동 종료] 기본 속도로 복구");
+
     }
 
     public void ApplyBuff(float multiplier)
     {
         runSpeed = baseSpeed * multiplier;
+       
         Debug.Log($"[버프 적용] {multiplier * 100}% 속도로 변경");
+
     }
 
     public void RemoveBuff()
     {
+      
         runSpeed = baseSpeed;
         Debug.Log("[버프 종료] 기본 속도로 복구");
-    }
 
-void Update()
+    }
+    private void PlayEffect(GameObject effectPrefab)
+    {
+        StopEffect(); // 기존 이펙트 제거
+        if (effectPrefab != null)
+        {
+            // 캐릭터 위치 + 약간 위쪽
+            Vector3 pos = transform.position + Vector3.up * 2f;
+            activeEffect = Instantiate(effectPrefab, pos, Quaternion.identity, transform);
+        }
+    }
+    private void StopEffect()
+    {
+        if (activeEffect != null)
+        {
+            Destroy(activeEffect);
+            activeEffect = null;
+        }
+    }
+    void Update()
     {
         // 좌우 레인 변경 (키보드 입력 예시: A=왼쪽, D=오른쪽)
         if (Input.GetKeyDown(KeyCode.A))

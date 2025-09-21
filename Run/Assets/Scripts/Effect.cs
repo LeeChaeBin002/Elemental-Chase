@@ -20,13 +20,10 @@ public class Effect : MonoBehaviour
     }
     void OnTriggerEnter(Collider other)
     {
+        if (effectData == null) return;
+
         if (other.CompareTag("Player"))
         {
-            if (effectData == null)
-            {
-                Debug.LogWarning($"{gameObject.name} 의 effectData가 설정되지 않았습니다!");
-                return;
-            }
 
             PlayerMovement pm = other.GetComponent<PlayerMovement>();
                 if (pm == null) return;

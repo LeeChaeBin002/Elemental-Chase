@@ -14,6 +14,10 @@ public class EnemyMove : MonoBehaviour
 
     private Coroutine slowCoroutine;
 
+    [Header("이펙트 프리팹")]
+    public GameObject debuffEffectPrefab; // 🔹 적용할 디버프 이펙트
+    private GameObject activeEffect;      // 실행 중인 이펙트
+
 
     void Start()
     {
@@ -64,12 +68,31 @@ public class EnemyMove : MonoBehaviour
     {
         
         moveSpeed = originalSpeed * slowMultiplier; // 이속감소
-
+        PlayEffect();
 
         yield return new WaitForSeconds(duration);
 
         moveSpeed = originalSpeed; // 원래 속도로 복귀
+        StopEffect();
         if (rend != null)
             rend.material = originalMaterial;
+    }
+    private void PlayEffect()
+    {
+        StopEffect();
+        if (debuffEffectPrefab != null)
+        {
+            // 🔹 2f 오프셋 제거 → 적 중심에 이펙트 붙음
+            activeEffect = Instantiate(debuffEffectPrefab, transform.position, Quaternion.identity, transform);
+        }
+    }
+
+    private void StopEffect()
+    {
+        if (activeEffect != null)
+        {
+            Destroy(activeEffect);
+            activeEffect = null;
+        }
     }
 }

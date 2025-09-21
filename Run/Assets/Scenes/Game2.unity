@@ -4099,7 +4099,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.17818779, y: -0.00043480782, z: 0.00007873753, w: 0.98399645}
+  m_LocalRotation: {x: 0.17818779, y: -0.0006043887, z: 0.000109446235, w: 0.98399633}
   m_LocalPosition: {x: 0, y: 5.49, z: -8.08}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4231,6 +4231,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 331878524}
   moveSpeed: 7
+  debuffEffectPrefab: {fileID: 0}
 --- !u!54 &331878527
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -8164,7 +8165,7 @@ Transform:
   m_GameObject: {fileID: 693770676}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.515833, y: 1.2948934, z: 541.94885}
+  m_LocalPosition: {x: -5.3862295, y: 1.0449829, z: 541.83704}
   m_LocalScale: {x: 1.026212, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13931,6 +13932,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 1061336289}
   moveSpeed: 16
+  debuffEffectPrefab: {fileID: 419411002348774512, guid: 247a3e752e93a864db063f5c85fd8391, type: 3}
 --- !u!1001 &1069060849
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -18540,7 +18542,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 1590557687}
-  moveSpeed: 16
+  moveSpeed: 18
+  debuffEffectPrefab: {fileID: 419411002348774512, guid: 247a3e752e93a864db063f5c85fd8391, type: 3}
 --- !u!95 &1590557687 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 2878772426701375066, guid: 87487c81f6ebae841aab7adaf53c861c, type: 3}
@@ -18620,7 +18623,7 @@ Transform:
   m_GameObject: {fileID: 1651127936}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -13.353833, y: 1.2948934, z: 541.94885}
+  m_LocalPosition: {x: -12.53, y: 1.03, z: 541.83704}
   m_LocalScale: {x: 0.7390502, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -18724,7 +18727,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 1654240842}
-  runSpeed: 18
+  runSpeed: 5
   laneOffset: 4
   jumpForce: 8
   laneChangeSpeed: 10
@@ -18734,6 +18737,8 @@ MonoBehaviour:
   fallMultiplier: 2.5
   fallSpeed: 10
   respawnPoint: {fileID: 346471082}
+  buffEffectPrefab: {fileID: 419411002348774512, guid: 0123b6a53ce44434b9502d73aefc1a0a, type: 3}
+  debuffEffectPrefab: {fileID: 419411002348774512, guid: 247a3e752e93a864db063f5c85fd8391, type: 3}
 --- !u!136 &1654240840
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -19365,7 +19370,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1704566472}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.1781878, y: -0.00043480782, z: 0.00007873754, w: 0.9839964}
+  m_LocalRotation: {x: 0.17818779, y: -0.00060438877, z: 0.00010944624, w: 0.98399633}
   m_LocalPosition: {x: 0, y: 5.49, z: -8.08}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
