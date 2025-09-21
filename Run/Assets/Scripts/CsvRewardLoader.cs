@@ -69,7 +69,7 @@ public static class CsvRewardLoader
                     if (field.Name == fieldName)
                     {
                         object converted = ConvertValue(field.FieldType, value);
-                        Debug.Log($"Header:{header}, Value:{value}, FieldName:{fieldName}");
+                        //Debug.Log($"Header:{header}, Value:{value}, FieldName:{fieldName}");
                         field.SetValue(obj, converted);
                     }
                 }

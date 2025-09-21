@@ -39,7 +39,11 @@ public class ElementDataLoader : MonoBehaviour
     public List<CharacterData> characters = new List<CharacterData>();
     public List<SkillTreeData> skillTrees = new List<SkillTreeData>();
     public List<SkillData> skills = new List<SkillData>();
+    public SkillTreeData SelectedTree => selectedTree;
 
+    private int currentLevel = 1;  // 현재 구간/레벨
+    private CharacterData selectedCharacter;
+    private SkillTreeData selectedTree;
 
     void Awake()
     {
@@ -57,8 +61,9 @@ public class ElementDataLoader : MonoBehaviour
         }
     }
 
-    // 🔹 캐릭터 선택 + 해당 스킬 세트 가져오기
-    public (CharacterData, List<SkillData>) GetRandomCharacterWithSkills()
+
+    // 🔹 현재 레벨에 해당하는 스킬 반환
+    public (CharacterData, List<SkillData>) GetRandomCharacterWithSkillByLevel(int currentLevel = 1)
     {
         if (characters.Count == 0 || skillTrees.Count == 0 || skills.Count == 0)
         {
@@ -72,59 +77,82 @@ public class ElementDataLoader : MonoBehaviour
 
         // 2. 해당 캐릭터의 스킬트리 찾기
         SkillTreeData tree = skillTrees.Find(t => t.SkillTreeId == selected.SkillTreeId);
-        if (tree == null)
+        if (tree == null) return (selected, null);
+        // 현재 캐릭터 원소
+        int elementId = tree.ElementId;
+
+        // 3. 현재 레벨 유효성 검사
+        if (currentLevel <= 0 || currentLevel > tree.Stages.Count)
         {
-            Debug.LogError($"스킬트리 {selected.SkillTreeId} 를 찾을 수 없습니다.");
+            Debug.LogWarning($"레벨 {currentLevel} 은 유효하지 않습니다.");
             return (selected, null);
         }
 
-        // 3. 스킬트리에 포함된 스킬 ID → 실제 SkillData 변환
-        List<SkillData> skillSet = new List<SkillData>();
-        foreach (int skillId in tree.Stages)
+        // 4. 스킬트리에서 해당 레벨 스킬 ID 가져오기
+        int skillId = tree.Stages[currentLevel - 1]; // 레벨1 → index0
+        SkillData skill = skills.Find(s => s.SkillId == skillId);
+
+        if (skill != null)
         {
-            SkillData skill = skills.Find(s => s.SkillId == skillId);
-            if (skill != null)
-            {
-                skillSet.Add(skill);
-            }
-            else
-            {
-                Debug.LogWarning($"스킬 ID {skillId} 를 찾을 수 없습니다.");
-            }
+            Debug.Log($"[스킬트리 기반 선택] Lv.{skill.Level} {skill.Name} - {skill.Description}");
+            // List<SkillData>로 감싸서 반환
+            return (selected, new List<SkillData> { skill });
         }
-
-        Debug.Log($"[스킬 세트] {tree.Name} → {skillSet.Count}개 스킬 로드됨");
-
-        return (selected, skillSet);
+        else
+        {
+            Debug.LogWarning($"스킬 ID {skillId} 를 찾을 수 없습니다.");
+            return (selected, null);
+        }
     }
 
     void Start()
     {
-        var (character, skillSet) = ElementDataLoader.Instance.GetRandomCharacterWithSkills();
 
-        if (character != null)
-        {
-            Debug.Log($"선택된 캐릭터: {character.Name}");
-            // 플레이어 이동 속도 반영
-            var pm = FindObjectOfType<PlayerMovement>();
-            if (pm != null)
-            {
-                pm.runSpeed = character.MoveSpeed;
-            }
-        }
+
+    }
+
+    // 🔹 현재 레벨에 해당하는 스킬 반환
+    public (CharacterData, List<SkillData>) GetCharacterWithSkillByLevel(int level)
+    {
+        if (characters.Count == 0 || skillTrees.Count == 0 || skills.Count == 0)
+            return (null, null);
+
+        if (selectedCharacter == null)
+            selectedCharacter = characters[UnityEngine.Random.Range(0, characters.Count)];
+
+        if (selectedTree == null)
+            selectedTree = skillTrees.Find(t => t.SkillTreeId == selectedCharacter.SkillTreeId);
+
+        if (selectedTree == null || level <= 0 || level > selectedTree.Stages.Count)
+            return (selectedCharacter, null);
+
+        int skillId = selectedTree.Stages[level - 1];
+        SkillData skill = skills.Find(s => s.SkillId == skillId);
+
+        if (skill != null)
+            return (selectedCharacter, new List<SkillData> { skill });
+
+        return (selectedCharacter, null);
+
+    }
+    // 🔹 외부에서 호출해서 레벨 올리고 새 스킬 적용
+    public void LevelUp()
+    {
+        currentLevel++;
+        var (character, skillSet) = GetCharacterWithSkillByLevel(currentLevel);
 
         if (skillSet != null)
         {
             foreach (var skill in skillSet)
-            {
-                Debug.Log($"스킬: {skill.Name}, 설명: {skill.Description}");
-            }
+                Debug.Log($"[레벨업] Lv.{skill.Level} {skill.Name} - {skill.Description}");
         }
-
-        
+        else
+        {
+            Debug.Log($"[레벨업] {currentLevel} 단계 스킬 없음");
+        }
     }
 
-    void LoadCharacters()
+void LoadCharacters()
     {
         TextAsset csvData = Resources.Load<TextAsset>("CSV/Character");
         if (csvData == null)
@@ -151,7 +179,7 @@ public class ElementDataLoader : MonoBehaviour
             characters.Add(data);
         }
 
-        Debug.Log($"총 {characters.Count}개의 캐릭터 데이터 로드 완료");
+        //Debug.Log($"총 {characters.Count}개의 캐릭터 데이터 로드 완료");
     }
     void LoadSkillTrees()
     {
@@ -186,7 +214,7 @@ public class ElementDataLoader : MonoBehaviour
             skillTrees.Add(data);
         }
 
-        Debug.Log($"총 {skillTrees.Count}개의 스킬트리 데이터 로드 완료");
+        //Debug.Log($"총 {skillTrees.Count}개의 스킬트리 데이터 로드 완료");
     }
     void LoadSkills()
     {
@@ -223,7 +251,21 @@ public class ElementDataLoader : MonoBehaviour
             skills.Add(data);
         }
 
-        Debug.Log($"총 {skills.Count}개의 스킬 데이터 로드 완료");
+       // Debug.Log($"총 {skills.Count}개의 스킬 데이터 로드 완료");
+    }
+
+    // 🔹 특정 원소와 레벨에 맞는 스킬 반환
+    public SkillData GetSkillByElement(int elementId, int level)
+    {
+        // 스킬 찾기
+        SkillData skill = skills.Find(s => s.ElementId == elementId && s.Level == level);
+
+        if (skill != null)
+            Debug.Log($"[원소 기반 선택] {skill.Name} (원소:{elementId}, Lv:{level})");
+        else
+            Debug.LogWarning($"[원소 기반 선택] {elementId}, Level:{level} 스킬을 찾을 수 없음");
+
+        return skill;
     }
 }
 

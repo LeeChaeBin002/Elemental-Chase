@@ -25,6 +25,14 @@ public class PlayerMovement : MonoBehaviour
 
     //private float keyHoldTime = 0f;
     private UnityEngine.Rigidbody rb;
+    private SkillData currentSkill;  // 현재 선택된 스킬 저장
+   
+    [Header("UI")]
+    public Slider skillCooldownSlider;  //쿨타임 시 오버레이
+    private bool canUseSkill = true; // 쿨타임 체크
+    public float skillCooldown = 5f; // 기본 쿨타임 (초)
+
+
     private int currentLane = 1;
     private Vector3 targetPosition;
 
@@ -47,6 +55,9 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<UnityEngine.Rigidbody>();
         baseSpeed = runSpeed;
+
+   
+
         rb.freezeRotation = true;
         animator.SetInteger("animation", 18);
         UpdateTargetPosition();
@@ -57,6 +68,172 @@ public class PlayerMovement : MonoBehaviour
             RespawnInstant();
         }
     }
+
+    // ElementDataLoader에서 스킬을 전달받을 함수
+    public void SetSkill(SkillData skill)
+    {
+        currentSkill = skill;
+        Debug.Log($"[플레이어] 스킬 세팅 완료 → {skill.Name}");
+    }
+    // 본체 클릭 시 스킬 발동
+    private void OnMouseDown()
+    {
+        UseSkill();
+    }
+    public void UseSkill()
+    {
+        if (!canUseSkill || currentSkill == null)
+        {
+            Debug.Log("스킬 사용 불가 (쿨타임 중이거나 스킬 없음)");
+            return;
+        }
+
+        Debug.Log($"[스킬 발동] {currentSkill.Name} - {currentSkill.Description}");
+
+        // 스킬 효과 자동 실행
+        ApplySkillEffect(currentSkill);
+        // 쿨타임 적용
+        StartCoroutine(SkillCooldownRoutine());
+    }
+    private void ApplySkillEffect(SkillData skill)
+    {
+        // 자기 자신 버프형
+        if (skill.TargetType == 1)
+        {
+            // BuffId1 적용 → 이속 증가
+            if (skill.BuffId1 == 321040) // 물 Lv1
+                StartCoroutine(ApplySpeedBuff(1.4f, skill.Duration));
+            else if (skill.BuffId1 == 321060) // 물 Lv2
+                StartCoroutine(ApplySpeedBuff(1.6f, skill.Duration));
+            else if (skill.BuffId1 == 321080) // 물 Lv3
+                StartCoroutine(ApplySpeedBuff(1.8f, skill.Duration));
+            else if (skill.BuffId1 == 312100) // 장애물 무시
+                StartCoroutine(ApplyInvincibility(skill.Duration));
+
+            // 공기 스킬 (ElementId == 3)
+            else if (skill.ElementId == 3)
+            {
+                if (skill.BuffId1 == 311040) // 공기 Lv1
+                    StartCoroutine(ApplySpeedBuff(1.4f, skill.Duration));
+                else if (skill.BuffId1 == 311060) // 공기 Lv2
+                    StartCoroutine(ApplySpeedBuff(1.6f, skill.Duration));
+                else if (skill.BuffId1 == 311080 && skill.BuffId2 == 0) // 공기 Lv3
+                    StartCoroutine(ApplySpeedBuff(1.8f, skill.Duration));
+                else if (skill.BuffId1 == 311080 && skill.BuffId2 == 312100) // 공기 Lv4
+                {
+                    StartCoroutine(ApplySpeedBuff(1.8f, skill.Duration));
+                    StartCoroutine(ApplyInvincibility(skill.Duration));
+                }
+            }
+        }
+        // 적 대상 디버프/공격형
+        else if (skill.TargetType == 2)
+        {
+            if (skill.ElementId == 2) // 불 원소
+            {
+                // DOT (초당 피해)
+                StartCoroutine(ApplyDamageOverTime(skill.Damage, skill.Duration));
+            }
+            else if (skill.ElementId == 4) // 흙 원소
+            {
+                // 즉발 데미지
+                EnemyHealth[] enemies = FindObjectsOfType<EnemyHealth>();
+                foreach (var enemy in enemies)
+                {
+                    enemy.TakeDamage(skill.Damage);
+                }
+                Debug.Log($"[즉시 피해] 흙 스킬 {skill.Name} → {skill.Damage} 데미지");
+            }
+            else
+            {
+                Debug.LogWarning($"[스킬 미구현] {skill.ElementId} 원소는 효과가 정의되지 않음");
+            }
+        }
+    }
+
+    private IEnumerator ApplySpeedBuff(float multiplier, float duration)
+    {
+        float original = runSpeed;
+        runSpeed = baseSpeed * multiplier;
+        PlayEffect(buffEffectPrefab);
+        Debug.Log($"[버프] 이속 {multiplier * 100}% ({duration}초)");
+
+        yield return new WaitForSeconds(duration);
+
+        runSpeed = original;
+        StopEffect();
+        Debug.Log("[버프 종료] 기본 속도로 복귀");
+    }
+
+    private IEnumerator ApplyInvincibility(float duration)
+    {
+        Debug.Log($"[무적] 장애물 무시 {duration}초");
+        // 예시: isBlocked 무시 처리
+        bool prev = isBlocked;
+        isBlocked = false;
+
+        yield return new WaitForSeconds(duration);
+
+        isBlocked = prev;
+        Debug.Log("[무적 종료]");
+    }
+
+    private IEnumerator ApplyDamageOverTime(int damagePerSecond, float duration)
+    {
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            EnemyHealth[] enemies = FindObjectsOfType<EnemyHealth>();
+            foreach (var enemy in enemies)
+            {
+                enemy.TakeDamage(damagePerSecond);
+            }
+
+            Debug.Log($"[도트 피해] 초당 {damagePerSecond} 데미지 적용");
+
+            yield return new WaitForSeconds(1f);
+            elapsed += 1f;
+        }
+        Debug.Log("[도트 피해 종료]");
+    }
+    private IEnumerator RemoveBuffAfter(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        runSpeed = baseSpeed;
+        Debug.Log("[캐릭터 스킬 종료] 기존으로 복구");
+    }
+    private IEnumerator SkillCooldownRoutine()
+    {
+        canUseSkill = false;
+
+        // 슬라이더 초기화
+        if (skillCooldownSlider != null)
+        {
+            skillCooldownSlider.maxValue = skillCooldown;
+            skillCooldownSlider.value = 0f; 
+        }
+        float time = 0f;
+
+
+        while (time < skillCooldown)
+        {
+            time += Time.deltaTime;
+
+            if (skillCooldownSlider != null)
+            {
+                //차오름
+                skillCooldownSlider.value = time;
+            }
+
+            yield return null;
+        }
+
+        if (skillCooldownSlider != null)
+            skillCooldownSlider.value = skillCooldown;
+        canUseSkill = true;
+        Debug.Log("[쿨타임 종료] 스킬 재사용 가능");
+    }
+
     public void ApplySlow(float multiplier)
     {
         //slowCount++;
@@ -217,7 +394,7 @@ public class PlayerMovement : MonoBehaviour
             }
             else
             {
-                Debug.Log(" 일반 점프!!");
+                Debug.Log("일반 점프");
             }
 
             // y속도 초기화 후 점프

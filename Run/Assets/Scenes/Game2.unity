@@ -4099,7 +4099,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.17818779, y: -0.0006043887, z: 0.000109446235, w: 0.98399633}
+  m_LocalRotation: {x: 0.17818777, y: -0.00084664684, z: 0.00015331576, w: 0.98399615}
   m_LocalPosition: {x: 0, y: 5.49, z: -8.08}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -5916,6 +5916,9 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1654710433}
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1443732249963639254, guid: 2d35fab028618b34da326112eadf9f38, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1061336291}
     - targetCorrespondingSourceObject: {fileID: 1443732249963639254, guid: 2d35fab028618b34da326112eadf9f38, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1061336290}
@@ -12122,7 +12125,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 33.739014, y: -59.043945}
+  m_AnchoredPosition: {x: 33.739014, y: -59.043823}
   m_SizeDelta: {x: -1121.833, y: -312.089}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!4 &969313658 stripped
@@ -13933,6 +13936,22 @@ MonoBehaviour:
   animator: {fileID: 1061336289}
   moveSpeed: 16
   debuffEffectPrefab: {fileID: 419411002348774512, guid: 247a3e752e93a864db063f5c85fd8391, type: 3}
+--- !u!114 &1061336291
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1061336286}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4b885ca8a2d00d44b581f87cddd4b55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHp: 100
+  hpBar: {fileID: 1703383696}
+  stunEffectPrefab: {fileID: 6097779538034126439, guid: b6d3e2e4b8df2964eb3dfce561902f3e, type: 3}
+  stunOffset: {x: 0, y: -1, z: 0}
 --- !u!1001 &1069060849
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17883,6 +17902,9 @@ PrefabInstance:
       addedObject: {fileID: 1590557685}
     - targetCorrespondingSourceObject: {fileID: 6559369316522263008, guid: 87487c81f6ebae841aab7adaf53c861c, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 1590557688}
+    - targetCorrespondingSourceObject: {fileID: 6559369316522263008, guid: 87487c81f6ebae841aab7adaf53c861c, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 1590557684}
   m_SourcePrefab: {fileID: 100100000, guid: 87487c81f6ebae841aab7adaf53c861c, type: 3}
 --- !u!4 &1531737476 stripped
@@ -18549,6 +18571,22 @@ Animator:
   m_CorrespondingSourceObject: {fileID: 2878772426701375066, guid: 87487c81f6ebae841aab7adaf53c861c, type: 3}
   m_PrefabInstance: {fileID: 1529803148}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1590557688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1590557682}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4b885ca8a2d00d44b581f87cddd4b55, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHp: 100
+  hpBar: {fileID: 1773382596}
+  stunEffectPrefab: {fileID: 6097779538034126439, guid: b6d3e2e4b8df2964eb3dfce561902f3e, type: 3}
+  stunOffset: {x: 0, y: -1, z: 0}
 --- !u!4 &1606743787 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6556274571068995286, guid: f250c67571bdadf4cabf357e887097f5, type: 3}
@@ -18727,7 +18765,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 1654240842}
-  runSpeed: 5
+  runSpeed: 10
   laneOffset: 4
   jumpForce: 8
   laneChangeSpeed: 10
@@ -18735,6 +18773,8 @@ MonoBehaviour:
   joystick: {fileID: 0}
   jumpButton: {fileID: 710923859}
   fallMultiplier: 2.5
+  skillCooldownSlider: {fileID: 6390479444016344247}
+  skillCooldown: 3
   fallSpeed: 10
   respawnPoint: {fileID: 346471082}
   buffEffectPrefab: {fileID: 419411002348774512, guid: 0123b6a53ce44434b9502d73aefc1a0a, type: 3}
@@ -19252,6 +19292,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6b39e7128f1ed9b4188427e009d2b359, type: 3}
+--- !u!114 &1703383696 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2860957224043677460, guid: 1e112a64c8160044eb586d99723e5988, type: 3}
+  m_PrefabInstance: {fileID: 300552176}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1704566472
 GameObject:
   m_ObjectHideFlags: 0
@@ -19370,7 +19421,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1704566472}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.17818779, y: -0.00060438877, z: 0.00010944624, w: 0.98399633}
+  m_LocalRotation: {x: 0.17818776, y: -0.0008466467, z: 0.00015331573, w: 0.98399615}
   m_LocalPosition: {x: 0, y: 5.49, z: -8.08}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -20055,6 +20106,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1834513849773979306, guid: 6b39e7128f1ed9b4188427e009d2b359, type: 3}
   m_PrefabInstance: {fileID: 1982154314}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1773382596 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2860957224043677460, guid: 1e112a64c8160044eb586d99723e5988, type: 3}
+  m_PrefabInstance: {fileID: 7025241327171276074}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67db9e8f0e2ae9c40bc1e2b64352a6b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1774463180 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6556274571068995286, guid: f250c67571bdadf4cabf357e887097f5, type: 3}

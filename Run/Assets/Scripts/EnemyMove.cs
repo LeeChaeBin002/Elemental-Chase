@@ -6,7 +6,7 @@ public class EnemyMove : MonoBehaviour
     public Animator animator;
     public float moveSpeed = 3f;
     private bool isMoving = true;
-
+    private bool isStunned = false;
     private float originalSpeed;
 
     private Renderer rend;
@@ -30,6 +30,12 @@ public class EnemyMove : MonoBehaviour
     }
     void Update()
     {
+        if (isStunned)
+        {
+            animator.SetInteger("animation", 34); // Idle 애니메이션
+            return; // 멈춤
+        }
+
         if (isMoving)
         {
             // 적 캐릭터의 정면 방향으로 계속 이동
@@ -42,7 +48,21 @@ public class EnemyMove : MonoBehaviour
             animator.SetInteger("animation", 34);
         }
     }
-
+    // 외부에서 스턴 상태 켜고 끄는 함수
+    public void SetStunned(bool stunned)
+    {
+        isStunned = stunned;
+        if (stunned)
+        {
+            moveSpeed = 0f; // 멈춤
+            animator.SetInteger("animation", 34);
+        }
+        else
+        {
+            moveSpeed = originalSpeed; // 원래 속도로 복귀
+            animator.SetInteger("animation", 18);
+        }
+    }
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Goal"))

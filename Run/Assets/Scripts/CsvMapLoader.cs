@@ -40,14 +40,14 @@ public class CsvMapLoader : MonoBehaviour
                 stateId = int.Parse(cols[7]),
                 description = cols[8]
             };
-            Debug.Log($"생성된 MapObject → name:{obj.name}, id:{obj.id}, buffId:{obj.buffId}"); // MapObject 생성 확인
+            //Debug.Log($"생성된 MapObject → name:{obj.name}, id:{obj.id}, buffId:{obj.buffId}"); // MapObject 생성 확인
             objects.Add(obj);
 
 
-            // 🔑 Hierarchy 오브젝트 중 ObjectId.id 와 매칭
+            // Hierarchy 오브젝트 중 ObjectId.id 와 매칭
             foreach (var objId in FindObjectsByType<ObjectId>(FindObjectsSortMode.None))
             {
-                Debug.Log($"Hierarchy 오브젝트: {objId.gameObject.name}, ObjectId:{objId.id}");
+                //Debug.Log($"Hierarchy 오브젝트: {objId.gameObject.name}, ObjectId:{objId.id}");
 
                 if (objId.id == obj.id)
                 {
@@ -56,7 +56,7 @@ public class CsvMapLoader : MonoBehaviour
                         eff = objId.gameObject.AddComponent<Effect>();
 
                     eff.effectData = obj;
-                    Debug.Log($"{obj.name}({obj.id}) → {objId.gameObject.name} 매칭 완료");
+                    //Debug.Log($"{obj.name}({obj.id}) → {objId.gameObject.name} 매칭 완료");
                 }
             }
 
