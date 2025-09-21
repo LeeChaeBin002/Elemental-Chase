@@ -41,27 +41,41 @@ public class RewardUI : MonoBehaviour
     
     public void ShowReward()
     {
-        if (dataManager == null) return;
-        Debug.Log("showReward 호출됌");
+        if (rewardParent != null)
+            rewardParent.SetActive(true);  // 패널 켜주기
+        if (dataManager == null)
+        {
+            Debug.LogWarning("[RewardUI] DataManager가 연결되지 않았습니다!");
+            return;
+        }
+
+        Debug.Log("[RewardUI] ShowReward 호출됨");
         gameObject.SetActive(true);
 
-        var img = rewardParent.GetComponent<UnityEngine.UI.Image>();
-        if (img != null)
+        // 🔹 UI 배경 활성화
+        if (rewardParent != null)
         {
-            img.color = new Color(1, 1, 1, 1); // 완전 불투명 흰색
+            var img = rewardParent.GetComponent<UnityEngine.UI.Image>();
+            if (img != null)
+                img.color = new Color(1, 1, 1, 1);
         }
-        int collectedCoins = ScoreManager.instance.coinCount; // 코인 개수 가져오기
 
+        int collectedCoins = ScoreManager.instance != null ? ScoreManager.instance.coinCount : 0;
+        Debug.Log($"[RewardUI] 현재 코인 개수: {collectedCoins}");
+
+        // 🔹 StringBuilder는 여기서 선언
         StringBuilder sb = new StringBuilder();
         sb.AppendLine("클리어 보상");
         sb.AppendLine($"획득한 코인: {collectedCoins}");
         sb.AppendLine();
 
+        // 🔹 보상 체크
         RewardData bestReward = null;
 
         foreach (var r in dataManager.rewards)
         {
-            Debug.Log($"RewardData: Name={r.Name}, Type={r.ConditionType}, Threshold={r.Threshold}, Amount={r.Amount}");
+            Debug.Log($"[RewardUI] 보상 후보: {r.Name}, 조건타입={r.ConditionType}, Threshold={r.Threshold}, Amount={r.Amount}");
+
             if (r.ConditionType == 1 && collectedCoins >= r.Threshold)
             {
                 if (bestReward == null || r.Threshold > bestReward.Threshold)
@@ -77,8 +91,12 @@ public class RewardUI : MonoBehaviour
             sb.AppendLine($"   재화 +{bestReward.Amount}");
             sb.AppendLine();
         }
+        else
+        {
+            Debug.Log("[RewardUI] 조건을 만족하는 보상이 없음!");
+        }
 
-
+        // 🔹 클리어 보상 타입 2 처리
         foreach (var r in dataManager.rewards)
         {
             if (r.ConditionType == 2)
@@ -88,7 +106,10 @@ public class RewardUI : MonoBehaviour
                 sb.AppendLine();
             }
         }
+
+        // 🔹 최종 UI 적용
         rewardText.text = sb.ToString();
+        Debug.Log("[RewardUI] 최종 출력 텍스트:\n" + sb.ToString());
     }
     
 

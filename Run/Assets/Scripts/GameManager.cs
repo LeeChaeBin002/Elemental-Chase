@@ -6,13 +6,21 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
+    [Header("UI")]
+    public RewardUI rewardUI;
+    
     public GameObject loseUI;
 
     public ElementDataLoader elementDataLoader;
     public CharacterData selectedCharacter;
 
-   // public List<SkillData> skills => elementDataLoader.skills;
-   // public List<SkillTreeData> skillTrees => elementDataLoader.skillTrees;
+    [Header("스테이지 관리")]
+    public int currentStage = 1;
+    public Transform[] playerSpawnPoints; // 구간별 플레이어 위치
+    public Transform[] enemySpawnPoints;  // 구간별 적 위치
+    private PlayerMovement player;
+    private EnemyMove enemy;
+
     public List<CharacterData> characters => elementDataLoader.characters;
     void Awake()
     {
@@ -23,6 +31,42 @@ public class GameManager : MonoBehaviour
 
         if (loseUI != null)
             loseUI.SetActive(false);
+    }
+
+    void Start()
+    {
+        player = FindObjectOfType<PlayerMovement>();
+        enemy = FindObjectOfType<EnemyMove>();
+        rewardUI.gameObject.SetActive(true);   // 켜둔 뒤
+        rewardUI.rewardParent.SetActive(false); // 내부 패널만 꺼두기
+        MoveToStage(currentStage);
+    }
+    public void MoveToStage(int stage)
+    {
+        currentStage = stage;
+
+        if (playerSpawnPoints.Length >= stage && player != null)
+        {
+            player.transform.position = playerSpawnPoints[stage - 1].position;
+            player.enabled = true;
+        }
+
+        if (enemySpawnPoints.Length >= stage && enemy != null)
+        {
+            enemy.transform.position = enemySpawnPoints[stage - 1].position;
+            enemy.SetStunned(false); // 혹시 스턴 풀기
+        }
+
+        Debug.Log($"[GameManager] {stage} 구간 시작!");
+    }
+    public void NextStage(int prevStage)
+    {
+        int nextStage = prevStage + 1;
+
+        if (nextStage <= playerSpawnPoints.Length)
+            MoveToStage(nextStage);
+        else
+            Debug.Log("[GameManager] 마지막 스테이지 클리어!");
     }
     public void ShowLoseUI()
     {
@@ -51,6 +95,20 @@ public class GameManager : MonoBehaviour
             player.RespawnAt(respawn.transform);
         }
     }
+    public void ShowRewardUI()
+    {
+        Time.timeScale = 0f; // 게임 멈춤
+        if (rewardUI != null)
+        {
+            rewardUI.gameObject.SetActive(true);  // 🔹 반드시 켜주기
+            rewardUI.ShowReward();
+            Debug.Log("[GameManager] 보상 UI 실행됨");
+        }
+        else
+        {
+            Debug.LogWarning("[GameManager] rewardUI가 Inspector에 연결되지 않음!");
+        }
+    }
     public void QuitGame()
     {
         Application.Quit();
@@ -62,28 +120,6 @@ public class GameManager : MonoBehaviour
 
     void PickRandomCandidates(int count)
     {
-    //    candidateElementIds.Clear();
-
-    //    if (elementDataLoader == null || elementDataLoader.elements.Count == 0)
-    //    {
-    //        Debug.LogError("CSV 데이터를 불러오지 못했습니다!");
-    //        return;
-    //    }
-
-    //    for (int i = 0; i < count; i++)
-    //    {
-    //        int index = Random.Range(0, elementDataLoader.elements.Count);
-    //        int pickedId = elementDataLoader.elements[index].Id;
-    //        candidateElementIds.Add(pickedId);
-    //    }
-
-    //    Debug.Log("랜덤 원소 후보 4명: " + string.Join(", ", candidateElementIds));
-    //}
-    //void SelectOneFromCandidates()
-    //{
-    //    int index = Random.Range(0, candidateElementIds.Count);
-    //    currentElementId = candidateElementIds[index];
-
-    //    Debug.Log($"최종 선택된 원소 ID = {currentElementId}");
+    
     }
 }
