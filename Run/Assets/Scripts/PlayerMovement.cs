@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using Unity.Cinemachine;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,8 +12,8 @@ public class PlayerMovement : MonoBehaviour
     public float laneOffset = 3f;
     public float jumpForce = 5f;
     public float laneChangeSpeed = 10f;//레인 이동속도
-    
-    
+
+
     private bool isStunned = false;
 
     public GameObject blindOverlay;
@@ -25,7 +26,7 @@ public class PlayerMovement : MonoBehaviour
     //private float keyHoldTime = 0f;
     private UnityEngine.Rigidbody rb;
     private SkillData currentSkill;  // 현재 선택된 스킬 저장
-   
+
     [Header("UI")]
     public Slider skillCooldownSlider;  //쿨타임 시 오버레이
     private bool canUseSkill = true; // 쿨타임 체크
@@ -38,7 +39,7 @@ public class PlayerMovement : MonoBehaviour
     private bool isGrounded = true;
     private bool hasJumped = false;
     private bool isBlocked = false;
-    
+
 
     public float fallSpeed = 10f; // 낙하 속도
     public Transform respawnPoint;
@@ -53,15 +54,17 @@ public class PlayerMovement : MonoBehaviour
 
     public GameObject stunEffectPrefab;   // 🔹 Inspector에서 연결할 스턴 이펙트 프리팹
     private GameObject activeStunEffect;  // 현재 실행 중인 이펙트
-   
+
     public Vector3 stunOffset = new Vector3(0, 0.3f, 0); // Inspector에서 조절 가능
 
+    [Header("Camera")]
+    public CinemachineCamera cineCam;   // 🔹 인스펙터에서 CinemachineCamera 드래그
+    private float defaultFOV = 40f;
+    private Coroutine fovCoroutine;
     void Start()
     {
         rb = GetComponent<UnityEngine.Rigidbody>();
         baseSpeed = runSpeed;
-
-   
 
         rb.freezeRotation = true;
         animator.SetInteger("animation", 18);
@@ -163,11 +166,52 @@ public class PlayerMovement : MonoBehaviour
         PlayEffect(buffEffectPrefab);
         Debug.Log($"[버프] 이속 {multiplier * 100}% ({duration}초)");
 
+        // 🔹 카메라 줌인 (FOV 30으로)
+        if (cineCam != null)
+        {
+            if (fovCoroutine != null) StopCoroutine(fovCoroutine);
+            float targetFOV = CalculateTargetFOV(multiplier);
+            fovCoroutine = StartCoroutine(ChangeFOV(30f, 0.5f)); // 0.5초 동안 줌인
+        }
         yield return new WaitForSeconds(duration);
 
         runSpeed = original;
         StopEffect();
         Debug.Log("[버프 종료] 기본 속도로 복귀");
+        // 🔹 카메라 줌아웃 (기본값으로 되돌림)
+        if (cineCam != null)
+        {
+            if (fovCoroutine != null) StopCoroutine(fovCoroutine);
+            fovCoroutine = StartCoroutine(ChangeFOV(defaultFOV, 0.5f)); // 0.5초 동안 복구
+        }
+    }
+    // 배율 → 타겟 FOV 계산 함수
+    private float CalculateTargetFOV(float multiplier)
+    {
+        // multiplier = 1 → defaultFOV
+        // multiplier = 1.8 → defaultFOV - 10 (즉 30)
+        float minMultiplier = 1f;
+        float maxMultiplier = 1.8f;
+        float minFOV = defaultFOV - 10f; // 최대로 줄일 값 (예: 30)
+        float maxFOV = defaultFOV;       // 기본값 (예: 40)
+
+        // 선형 보간
+        float t = Mathf.InverseLerp(minMultiplier, maxMultiplier, multiplier);
+        return Mathf.Lerp(maxFOV, minFOV, t);
+        }
+    private IEnumerator ChangeFOV(float targetFOV, float duration)
+    {
+        float startFOV = cineCam.Lens.FieldOfView;
+        float time = 0f;
+
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            cineCam.Lens.FieldOfView = Mathf.Lerp(startFOV, targetFOV, time / duration);
+            yield return null;
+        }
+
+        cineCam.Lens.FieldOfView = targetFOV; // 보정
     }
 
     private IEnumerator ApplyInvincibility(float duration)
@@ -201,7 +245,7 @@ public class PlayerMovement : MonoBehaviour
         }
         Debug.Log("[도트 피해 종료]");
     }
-  
+
     private IEnumerator SkillCooldownRoutine()
     {
         canUseSkill = false;
@@ -210,7 +254,7 @@ public class PlayerMovement : MonoBehaviour
         if (skillCooldownSlider != null)
         {
             skillCooldownSlider.maxValue = skillCooldown;
-            skillCooldownSlider.value = 0f; 
+            skillCooldownSlider.value = 0f;
         }
         float time = 0f;
 
@@ -236,7 +280,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void ApplySlow(float multiplier)
     {
-        
+
         runSpeed = baseSpeed * multiplier;
         PlayEffect(debuffEffectPrefab);
         Debug.Log($"[슬로우 적용] {multiplier * 100}% 속도로 변경");
@@ -323,14 +367,14 @@ public class PlayerMovement : MonoBehaviour
     public void ApplyBuff(float multiplier)
     {
         runSpeed = baseSpeed * multiplier;
-       
+
         Debug.Log($"[버프 적용] {multiplier * 100}% 속도로 변경");
 
     }
 
     public void RemoveBuff()
     {
-      
+
         runSpeed = baseSpeed;
         Debug.Log("[버프 종료] 기본 속도로 복구");
 
@@ -372,10 +416,10 @@ public class PlayerMovement : MonoBehaviour
         {
             Die();
         }
-      
+
 
     }
- 
+
 
     public void ChangeLane(int direction)
     {
@@ -434,7 +478,7 @@ public class PlayerMovement : MonoBehaviour
             // 기본 점프 힘
             float force = jumpForce;
 
-            
+
 
             if (isBlocked)
             {
@@ -585,7 +629,7 @@ public class PlayerMovement : MonoBehaviour
         RespawnInstant();
     }
 
-  
+
     void RespawnInstant()
     {
         Vector3 pos = respawnPoint.position;
@@ -640,5 +684,5 @@ public class PlayerMovement : MonoBehaviour
             return; // 무적 상태라면 충돌 무시
 
     }
-   
-}
+
+}
