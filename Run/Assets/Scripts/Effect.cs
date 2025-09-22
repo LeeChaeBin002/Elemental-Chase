@@ -14,10 +14,7 @@ public class Effect : MonoBehaviour
     //[Header("Prefabs")]
     //public GameObject projectilePrefab;
 
-    void Awake()
-    {
-    
-    }
+   
     void OnTriggerEnter(Collider other)
     {
         if (effectData == null) return;
