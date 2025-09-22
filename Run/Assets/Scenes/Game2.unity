@@ -728,6 +728,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2683806013438408937, guid: a20e1813f77e9984da809c9097772221, type: 3}
   m_PrefabInstance: {fileID: 1073318549}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &68731176 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+  m_PrefabInstance: {fileID: 1824245744}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &69220594
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2553,6 +2558,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4863141576556952972, guid: 28b0278afdac50644add16bb7e4b45f3, type: 3}
   m_PrefabInstance: {fileID: 1707436547}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &207298798 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+  m_PrefabInstance: {fileID: 2077457008}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &207749017 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6506723184206358931, guid: c203e9d21f944b547b3de7c7b877e747, type: 3}
@@ -4086,7 +4096,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.17818777, y: -0.0011524368, z: 0.00020869, w: 0.98399585}
+  m_LocalRotation: {x: 0.17818779, y: -0.0007221322, z: 0.00013076792, w: 0.9839963}
   m_LocalPosition: {x: 0, y: 5.49, z: -8.08}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -5013,114 +5023,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f250c67571bdadf4cabf357e887097f5, type: 3}
---- !u!1 &386607658
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 386607662}
-  - component: {fileID: 386607661}
-  - component: {fileID: 386607660}
-  - component: {fileID: 386607659}
-  m_Layer: 0
-  m_Name: land wild west railway station (1)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!65 &386607659
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 386607658}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 45, y: 4.696413, z: 44.999992}
-  m_Center: {x: 0, y: 2.3482065, z: 0}
---- !u!23 &386607660
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 386607658}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: e5c8ac6092e78214fb866cab5f020f2a, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &386607661
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 386607658}
-  m_Mesh: {fileID: 8515268588606497379, guid: e2a598321feae8849b15ea8f560c801b, type: 3}
---- !u!4 &386607662
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 386607658}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4, y: -0.166, z: 443.73}
-  m_LocalScale: {x: 0.05331224, y: 0.064499415, z: 0.023548761}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1293500397}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &387593732 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1834513849773979306, guid: 6b39e7128f1ed9b4188427e009d2b359, type: 3}
@@ -5183,114 +5085,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6b39e7128f1ed9b4188427e009d2b359, type: 3}
---- !u!1 &389698306
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 389698310}
-  - component: {fileID: 389698309}
-  - component: {fileID: 389698308}
-  - component: {fileID: 389698307}
-  m_Layer: 0
-  m_Name: land wild west railway station
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!65 &389698307
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 389698306}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 45, y: 4.696413, z: 44.999992}
-  m_Center: {x: 0, y: 2.3482065, z: 0}
---- !u!23 &389698308
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 389698306}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: e5c8ac6092e78214fb866cab5f020f2a, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &389698309
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 389698306}
-  m_Mesh: {fileID: 8515268588606497379, guid: e2a598321feae8849b15ea8f560c801b, type: 3}
---- !u!4 &389698310
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 389698306}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -2.15, y: -1.51, z: 256.61}
-  m_LocalScale: {x: 0.15503936, y: 0.37175456, z: 0.13815951}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1293500397}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &397741894
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -5635,6 +5429,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7166173608737450819, guid: 17c5d207614e25f408edd3859bc73449, type: 3}
       propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7166173608737450819, guid: 17c5d207614e25f408edd3859bc73449, type: 3}
+      propertyPath: m_ProvidesContacts
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -10001,6 +9799,75 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1199944957264003849, guid: f7dc614486d566a47b86c18e2401e91c, type: 3}
   m_PrefabInstance: {fileID: 832798431}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &833336555
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1293500397}
+    m_Modifications:
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.05331224
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.064499415
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.023548761
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.166
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 441.18
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8198581335924367586, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_Name
+      value: land wild west railway station (8)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
 --- !u!4 &834693952 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4863141576556952972, guid: 28b0278afdac50644add16bb7e4b45f3, type: 3}
@@ -11205,6 +11072,10 @@ PrefabInstance:
       propertyPath: m_IsTrigger
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7166173608737450819, guid: 17c5d207614e25f408edd3859bc73449, type: 3}
+      propertyPath: m_ProvidesContacts
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -11318,6 +11189,75 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1802472452}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &908856816
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1293500397}
+    m_Modifications:
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.05331224
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.064499415
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.023548761
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.166
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 443.73
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8198581335924367586, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_Name
+      value: land wild west railway station (7)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
 --- !u!4 &911969022 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6556274571068995286, guid: f250c67571bdadf4cabf357e887097f5, type: 3}
@@ -11327,6 +11267,11 @@ Transform:
 Transform:
   m_CorrespondingSourceObject: {fileID: 1834513849773979306, guid: 6b39e7128f1ed9b4188427e009d2b359, type: 3}
   m_PrefabInstance: {fileID: 168484324}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &917378118 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+  m_PrefabInstance: {fileID: 833336555}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &918334467 stripped
 Transform:
@@ -13292,114 +13237,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!1 &1031077597
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1031077601}
-  - component: {fileID: 1031077600}
-  - component: {fileID: 1031077599}
-  - component: {fileID: 1031077598}
-  m_Layer: 0
-  m_Name: land wild west railway station (2)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!65 &1031077598
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1031077597}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 45, y: 4.696413, z: 44.999992}
-  m_Center: {x: 0, y: 2.3482065, z: 0}
---- !u!23 &1031077599
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1031077597}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: e5c8ac6092e78214fb866cab5f020f2a, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &1031077600
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1031077597}
-  m_Mesh: {fileID: 8515268588606497379, guid: e2a598321feae8849b15ea8f560c801b, type: 3}
---- !u!4 &1031077601
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1031077597}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.05, y: -0.166, z: 441.18}
-  m_LocalScale: {x: 0.05331224, y: 0.064499415, z: 0.023548761}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1293500397}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1035164518 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6506723184206358931, guid: c203e9d21f944b547b3de7c7b877e747, type: 3}
@@ -16194,9 +16031,10 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 389698310}
-  - {fileID: 386607662}
-  - {fileID: 1031077601}
+  - {fileID: 68731176}
+  - {fileID: 917378118}
+  - {fileID: 1523511068}
+  - {fileID: 207298798}
   - {fileID: 1452608452}
   - {fileID: 478869927}
   - {fileID: 881885393}
@@ -16589,6 +16427,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7166173608737450819, guid: 17c5d207614e25f408edd3859bc73449, type: 3}
       propertyPath: m_IsTrigger
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7166173608737450819, guid: 17c5d207614e25f408edd3859bc73449, type: 3}
+      propertyPath: m_ProvidesContacts
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -17718,6 +17560,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f250c67571bdadf4cabf357e887097f5, type: 3}
+--- !u!4 &1523511068 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+  m_PrefabInstance: {fileID: 908856816}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1524894011
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -19434,7 +19281,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1704566472}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.17818771, y: -0.0011524365, z: 0.00020868989, w: 0.98399585}
+  m_LocalRotation: {x: 0.17818779, y: -0.0007221322, z: 0.00013076792, w: 0.9839963}
   m_LocalPosition: {x: 0, y: 5.49, z: -8.08}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -20963,6 +20810,63 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5494720569346499421, guid: 66f7fc069d700214791e478feb632be8, type: 3}
   m_PrefabInstance: {fileID: 896491275}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &1824245744
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1293500397}
+    m_Modifications:
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -2.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.51
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 256.61
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8198581335924367586, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_Name
+      value: land wild west railway station (6)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
 --- !u!4 &1826956184 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6556274571068995286, guid: f250c67571bdadf4cabf357e887097f5, type: 3}
@@ -20978,114 +20882,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6556274571068995286, guid: f250c67571bdadf4cabf357e887097f5, type: 3}
   m_PrefabInstance: {fileID: 291619114}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1835551492
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1835551496}
-  - component: {fileID: 1835551495}
-  - component: {fileID: 1835551494}
-  - component: {fileID: 1835551493}
-  m_Layer: 0
-  m_Name: land wild west railway station (5)
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!65 &1835551493
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1835551492}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 45, y: 4.696413, z: 44.999992}
-  m_Center: {x: 0, y: 2.3482065, z: 0}
---- !u!23 &1835551494
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1835551492}
-  m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
-  m_DynamicOccludee: 1
-  m_StaticShadowCaster: 0
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 2
-  m_RayTraceProcedural: 0
-  m_RayTracingAccelStructBuildFlagsOverride: 0
-  m_RayTracingAccelStructBuildFlags: 1
-  m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: e5c8ac6092e78214fb866cab5f020f2a, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_ReceiveGI: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
-  m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &1835551495
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1835551492}
-  m_Mesh: {fileID: 8515268588606497379, guid: e2a598321feae8849b15ea8f560c801b, type: 3}
---- !u!4 &1835551496
+--- !u!4 &1835551496 stripped
 Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+  m_PrefabInstance: {fileID: 7984689349831009996}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1835551492}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 2.01, y: -1.51, z: 139.55}
-  m_LocalScale: {x: 0.15503936, y: 0.37175456, z: 0.13815951}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1863133266}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1842696869 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1834513849773979306, guid: 6b39e7128f1ed9b4188427e009d2b359, type: 3}
@@ -22802,6 +22603,10 @@ PrefabInstance:
       propertyPath: m_IsTrigger
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7166173608737450819, guid: 17c5d207614e25f408edd3859bc73449, type: 3}
+      propertyPath: m_ProvidesContacts
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -23264,6 +23069,75 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f250c67571bdadf4cabf357e887097f5, type: 3}
+--- !u!1001 &2077457008
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1293500397}
+    m_Modifications:
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.05331224
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.064499415
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.023548761
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.166
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 443.73
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8198581335924367586, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_Name
+      value: land wild west railway station (9)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
 --- !u!1001 &2081374548
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24114,6 +23988,10 @@ PrefabInstance:
       propertyPath: m_IsTrigger
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7166173608737450819, guid: 17c5d207614e25f408edd3859bc73449, type: 3}
+      propertyPath: m_ProvidesContacts
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -24765,6 +24643,63 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1001 &7984689349831009996
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1863133266}
+    m_Modifications:
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2.01
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.51
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 139.55
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7581024815983189451, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8198581335924367586, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
+      propertyPath: m_Name
+      value: land wild west railway station (5)
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b3d0a801d80cc4b47ad8d1cf3bb82b32, type: 3}
 --- !u!224 &8206435657759281558
 RectTransform:
   m_ObjectHideFlags: 0
