@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using Unity.Cinemachine;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
 public class PlayerMovement : MonoBehaviour
@@ -31,7 +32,8 @@ public class PlayerMovement : MonoBehaviour
     public Slider skillCooldownSlider;  //쿨타임 시 오버레이
     private bool canUseSkill = true; // 쿨타임 체크
     public float skillCooldown = 5f; // 기본 쿨타임 (초)
-
+    [Header("Effects")]
+    public Material speedEffectMat;
 
     private int currentLane = 1;
     private Vector3 targetPosition;
@@ -61,6 +63,9 @@ public class PlayerMovement : MonoBehaviour
     public CinemachineCamera cineCam;   // 🔹 인스펙터에서 CinemachineCamera 드래그
     private float defaultFOV = 40f;
     private Coroutine fovCoroutine;
+    public UniversalRendererData rendererData;
+    private ScriptableRendererFeature speedFeature;
+
     void Start()
     {
         rb = GetComponent<UnityEngine.Rigidbody>();
@@ -75,6 +80,18 @@ public class PlayerMovement : MonoBehaviour
         {
             RespawnInstant();
         }
+
+        // RendererFeature 찾기
+        foreach (var f in rendererData.rendererFeatures)
+            Debug.Log($"RendererFeature: {f.name}");
+
+        speedFeature = rendererData.rendererFeatures
+            .Find(f => f.name.Contains("FullScreenPassRendererFeature"));
+
+        if (speedFeature != null)
+            Debug.Log("[OK] SpeedFeature 연결 성공!");
+        else
+            Debug.LogError("[ERROR] SpeedFeature 못 찾음");
     }
 
     // ElementDataLoader에서 스킬을 전달받을 함수
@@ -173,7 +190,10 @@ public class PlayerMovement : MonoBehaviour
             float targetFOV = CalculateTargetFOV(multiplier);
             fovCoroutine = StartCoroutine(ChangeFOV(30f, 0.5f)); // 0.5초 동안 줌인
         }
+
+        SetSpeedEffect(true);   // 켜기
         yield return new WaitForSeconds(duration);
+        SetSpeedEffect(false);  // 끄기
 
         runSpeed = original;
         StopEffect();
@@ -184,7 +204,23 @@ public class PlayerMovement : MonoBehaviour
             if (fovCoroutine != null) StopCoroutine(fovCoroutine);
             fovCoroutine = StartCoroutine(ChangeFOV(defaultFOV, 0.5f)); // 0.5초 동안 복구
         }
+
     }
+    private void SetSpeedEffect(bool enabled)
+    {
+        Debug.Log($"[SetSpeedEffect 호출됨] enabled={enabled}, speedFeature={(speedFeature != null ? speedFeature.name : "NULL")}");
+        
+        if (speedFeature != null)
+        {
+            speedFeature.SetActive(enabled);
+            Debug.Log($"[RendererFeature 적용됨] {speedFeature.name} → {enabled}");
+        }
+        else
+        {
+            Debug.LogError("[ERROR] speedFeature == null (rendererData 연결 안됨)");
+        }
+    }
+
     // 배율 → 타겟 FOV 계산 함수
     private float CalculateTargetFOV(float multiplier)
     {
