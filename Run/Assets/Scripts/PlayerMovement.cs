@@ -1,0 +1,593 @@
+﻿using System.Collections;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class PlayerMovement : MonoBehaviour
+{
+    public Animator animator;
+
+    public float runSpeed = 10f;
+    private float baseSpeed;
+    private int slowCount = 0;
+    public float laneOffset = 3f;
+    public float jumpForce = 5f;
+    public float laneChangeSpeed = 10f;//레인 이동속도
+    
+    
+    private bool isStunned = false;
+
+    public GameObject blindOverlay;
+
+    public VirtualJoystick joystick; // 조이스틱 연결용
+    public Button jumpButton;
+
+    public float fallMultiplier = 2.5f; // 낙하 가속 배율
+
+    //private float keyHoldTime = 0f;
+    private UnityEngine.Rigidbody rb;
+    private SkillData currentSkill;  // 현재 선택된 스킬 저장
+   
+    [Header("UI")]
+    public Slider skillCooldownSlider;  //쿨타임 시 오버레이
+    private bool canUseSkill = true; // 쿨타임 체크
+    public float skillCooldown = 5f; // 기본 쿨타임 (초)
+
+
+    private int currentLane = 1;
+    private Vector3 targetPosition;
+
+    private bool isGrounded = true;
+    private bool hasJumped = false;
+    private bool isBlocked = false;
+    
+
+    public float fallSpeed = 10f; // 낙하 속도
+    public Transform respawnPoint;
+
+    private bool isDead = false;
+    private float invincibleTimer = 0f;
+
+    public GameObject buffEffectPrefab;   // 버프 이펙트
+    public GameObject debuffEffectPrefab;
+
+    private GameObject activeEffect;
+    void Start()
+    {
+        rb = GetComponent<UnityEngine.Rigidbody>();
+        baseSpeed = runSpeed;
+
+   
+
+        rb.freezeRotation = true;
+        animator.SetInteger("animation", 18);
+        UpdateTargetPosition();
+        jumpButton.onClick.AddListener(Jump);
+
+        if (isDead)
+        {
+            RespawnInstant();
+        }
+    }
+
+    // ElementDataLoader에서 스킬을 전달받을 함수
+    public void SetSkill(SkillData skill)
+    {
+        currentSkill = skill;
+        Debug.Log($"[플레이어] 스킬 세팅 완료 → {skill.Name}");
+    }
+    // 본체 클릭 시 스킬 발동
+    private void OnMouseDown()
+    {
+        UseSkill();
+    }
+    public void UseSkill()
+    {
+        if (!canUseSkill || currentSkill == null)
+        {
+            Debug.Log("스킬 사용 불가 (쿨타임 중이거나 스킬 없음)");
+            return;
+        }
+
+        Debug.Log($"[스킬 발동] {currentSkill.Name} - {currentSkill.Description}");
+
+        // 스킬 효과 자동 실행
+        ApplySkillEffect(currentSkill);
+        // 쿨타임 적용
+        StartCoroutine(SkillCooldownRoutine());
+    }
+    private void ApplySkillEffect(SkillData skill)
+    {
+        // 자기 자신 버프형
+        if (skill.TargetType == 1)
+        {
+            // BuffId1 적용 → 이속 증가
+            if (skill.BuffId1 == 321040) // 물 Lv1
+                StartCoroutine(ApplySpeedBuff(1.4f, skill.Duration));
+            else if (skill.BuffId1 == 321060) // 물 Lv2
+                StartCoroutine(ApplySpeedBuff(1.6f, skill.Duration));
+            else if (skill.BuffId1 == 321080) // 물 Lv3
+                StartCoroutine(ApplySpeedBuff(1.8f, skill.Duration));
+            else if (skill.BuffId1 == 312100) // 장애물 무시
+                StartCoroutine(ApplyInvincibility(skill.Duration));
+
+            // 공기 스킬 (ElementId == 3)
+            else if (skill.ElementId == 3)
+            {
+                if (skill.BuffId1 == 311040) // 공기 Lv1
+                    StartCoroutine(ApplySpeedBuff(1.4f, skill.Duration));
+                else if (skill.BuffId1 == 311060) // 공기 Lv2
+                    StartCoroutine(ApplySpeedBuff(1.6f, skill.Duration));
+                else if (skill.BuffId1 == 311080 && skill.BuffId2 == 0) // 공기 Lv3
+                    StartCoroutine(ApplySpeedBuff(1.8f, skill.Duration));
+                else if (skill.BuffId1 == 311080 && skill.BuffId2 == 312100) // 공기 Lv4
+                {
+                    StartCoroutine(ApplySpeedBuff(1.8f, skill.Duration));
+                    StartCoroutine(ApplyInvincibility(skill.Duration));
+                }
+            }
+        }
+        // 적 대상 디버프/공격형
+        else if (skill.TargetType == 2)
+        {
+            if (skill.ElementId == 2) // 불 원소
+            {
+                // DOT (초당 피해)
+                StartCoroutine(ApplyDamageOverTime(skill.Damage, skill.Duration));
+            }
+            else if (skill.ElementId == 4) // 흙 원소
+            {
+                // 즉발 데미지
+                EnemyHealth[] enemies = FindObjectsOfType<EnemyHealth>();
+                foreach (var enemy in enemies)
+                {
+                    enemy.TakeDamage(skill.Damage);
+                }
+                Debug.Log($"[즉시 피해] 흙 스킬 {skill.Name} → {skill.Damage} 데미지");
+            }
+            else
+            {
+                Debug.LogWarning($"[스킬 미구현] {skill.ElementId} 원소는 효과가 정의되지 않음");
+            }
+        }
+    }
+
+    private IEnumerator ApplySpeedBuff(float multiplier, float duration)
+    {
+        float original = runSpeed;
+        runSpeed = baseSpeed * multiplier;
+        PlayEffect(buffEffectPrefab);
+        Debug.Log($"[버프] 이속 {multiplier * 100}% ({duration}초)");
+
+        yield return new WaitForSeconds(duration);
+
+        runSpeed = original;
+        StopEffect();
+        Debug.Log("[버프 종료] 기본 속도로 복귀");
+    }
+
+    private IEnumerator ApplyInvincibility(float duration)
+    {
+        Debug.Log($"[무적] 장애물 무시 {duration}초");
+        // 예시: isBlocked 무시 처리
+        bool prev = isBlocked;
+        isBlocked = false;
+
+        yield return new WaitForSeconds(duration);
+
+        isBlocked = prev;
+        Debug.Log("[무적 종료]");
+    }
+
+    private IEnumerator ApplyDamageOverTime(int damagePerSecond, float duration)
+    {
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            EnemyHealth[] enemies = FindObjectsOfType<EnemyHealth>();
+            foreach (var enemy in enemies)
+            {
+                enemy.TakeDamage(damagePerSecond);
+            }
+
+            Debug.Log($"[도트 피해] 초당 {damagePerSecond} 데미지 적용");
+
+            yield return new WaitForSeconds(1f);
+            elapsed += 1f;
+        }
+        Debug.Log("[도트 피해 종료]");
+    }
+    private IEnumerator RemoveBuffAfter(float duration)
+    {
+        yield return new WaitForSeconds(duration);
+        runSpeed = baseSpeed;
+        Debug.Log("[캐릭터 스킬 종료] 기존으로 복구");
+    }
+    private IEnumerator SkillCooldownRoutine()
+    {
+        canUseSkill = false;
+
+        // 슬라이더 초기화
+        if (skillCooldownSlider != null)
+        {
+            skillCooldownSlider.maxValue = skillCooldown;
+            skillCooldownSlider.value = 0f; 
+        }
+        float time = 0f;
+
+
+        while (time < skillCooldown)
+        {
+            time += Time.deltaTime;
+
+            if (skillCooldownSlider != null)
+            {
+                //차오름
+                skillCooldownSlider.value = time;
+            }
+
+            yield return null;
+        }
+
+        if (skillCooldownSlider != null)
+            skillCooldownSlider.value = skillCooldown;
+        canUseSkill = true;
+        Debug.Log("[쿨타임 종료] 스킬 재사용 가능");
+    }
+
+    public void ApplySlow(float multiplier)
+    {
+        //slowCount++;
+        runSpeed = baseSpeed * multiplier;
+        PlayEffect(debuffEffectPrefab);
+        Debug.Log($"[슬로우 적용] {multiplier * 100}% 속도로 변경");
+
+    }
+
+    public void RemoveSlow()
+    {
+        StopEffect();
+        runSpeed = baseSpeed;
+        Debug.Log("[슬로우 종료] 기본 속도로 복구");
+    }
+    // 🔹 일정 시간 후 자동 해제되는 슬로우 (바위 같은 경우)
+    public void ApplyTimedSlow(float multiplier, float duration)
+    {
+        StopCoroutine(nameof(TimedSlowCoroutine)); // 중복 방지
+        StartCoroutine(TimedSlowCoroutine(multiplier, duration));
+    }
+    private IEnumerator TimedSlowCoroutine(float multiplier, float duration)
+    {
+        runSpeed = baseSpeed * multiplier;
+        PlayEffect(debuffEffectPrefab);
+        Debug.Log($"[슬로우 적용] {multiplier * 100}% 속도로 변경 ({duration}초)");
+
+        yield return new WaitForSeconds(duration);
+
+        StopEffect();
+        runSpeed = baseSpeed;
+        Debug.Log("[슬로우 자동 종료] 기본 속도로 복구");
+
+    }
+
+    public void ApplyBuff(float multiplier)
+    {
+        runSpeed = baseSpeed * multiplier;
+       
+        Debug.Log($"[버프 적용] {multiplier * 100}% 속도로 변경");
+
+    }
+
+    public void RemoveBuff()
+    {
+      
+        runSpeed = baseSpeed;
+        Debug.Log("[버프 종료] 기본 속도로 복구");
+
+    }
+    private void PlayEffect(GameObject effectPrefab)
+    {
+        StopEffect(); // 기존 이펙트 제거
+        if (effectPrefab != null)
+        {
+            // 캐릭터 위치 + 약간 위쪽
+            Vector3 pos = transform.position + Vector3.up * 2f;
+            activeEffect = Instantiate(effectPrefab, pos, Quaternion.identity, transform);
+        }
+    }
+    private void StopEffect()
+    {
+        if (activeEffect != null)
+        {
+            Destroy(activeEffect);
+            activeEffect = null;
+        }
+    }
+    void Update()
+    {
+        // 좌우 레인 변경 (키보드 입력 예시: A=왼쪽, D=오른쪽)
+        if (Input.GetKeyDown(KeyCode.A))
+            ChangeLane(-1);
+        if (Input.GetKeyDown(KeyCode.D))
+            ChangeLane(1);
+
+        // 레인 보간 이동 (x축만 움직임)
+        Vector3 lanePos = new Vector3(targetPosition.x, rb.position.y, rb.position.z);
+        rb.position = Vector3.MoveTowards(rb.position, lanePos, laneChangeSpeed * Time.deltaTime);
+
+        // 애니메이션: 항상 달리는 상태
+        animator.SetInteger("animation", 18);
+
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            Die();
+        }
+      
+
+    }
+ 
+
+    public void ChangeLane(int direction)
+    {
+        int newLane = Mathf.Clamp(currentLane + direction, 0, 2); // 0~2 범위 제한
+        if (newLane != currentLane)
+        {
+            currentLane = newLane;
+            UpdateTargetPosition();
+        }
+    }
+    void UpdateTargetPosition()
+    {
+        // 레인별 X 좌표 계산 (왼 -3, 중 0, 오 +3 같은 구조)
+        float xPos = (currentLane - 1) * laneOffset;
+        targetPosition = new Vector3(xPos, transform.position.y, transform.position.z);
+    }
+
+    public void ApplyStun(float duration)//스턴지속
+    {
+        StartCoroutine(StunCoroutine(duration));
+    }
+
+    IEnumerator StunCoroutine(float duration)
+    {
+        isStunned = true;
+        rb.linearVelocity = Vector3.zero;
+        animator.SetInteger("animation", 34);
+        yield return new WaitForSeconds(duration);
+        isStunned = false;
+    }
+    public void ApplyBlind(float duration)//시야가려짐
+    {
+        StartCoroutine(BlindCoroutine(duration));
+    }
+    IEnumerator BlindCoroutine(float duration)
+    {
+        if (blindOverlay != null) blindOverlay.SetActive(true);
+        yield return new WaitForSeconds(duration);
+        if (blindOverlay != null) blindOverlay.SetActive(false);
+    }
+
+
+
+    void Jump()
+    {
+        if (isDead) return;
+        if (isDead || isStunned) return;
+
+        if (!hasJumped && (isGrounded || isBlocked))
+        {
+            hasJumped = true;
+            isGrounded = false;
+
+            animator.SetTrigger("Jump");
+
+            // 기본 점프 힘
+            float force = jumpForce;
+
+            
+
+            if (isBlocked)
+            {
+                // Scale.y = 1 → 높이 1m 장애물
+                float requiredJump = Mathf.Sqrt(2 * Mathf.Abs(Physics.gravity.y) * 1.3f);
+                force = Mathf.Max(force, requiredJump); // 최소 4.5 이상 보정
+                Debug.Log($" 장애물 앞 점프! force={force}");
+            }
+            else
+            {
+                Debug.Log("일반 점프");
+            }
+
+            // y속도 초기화 후 점프
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+            rb.AddForce(Vector3.up * force, ForceMode.Impulse);
+        }
+
+
+    }
+    // 점프 직후 추가 힘을 적용하는 코루틴
+    private IEnumerator ApplyExtraJumpForce()
+    {
+        yield return new WaitForFixedUpdate(); // 한 프레임 대기
+
+        // 추가 상승 힘 적용
+        if (!isGrounded && rb.linearVelocity.y > 0)
+        {
+            rb.AddForce(Vector3.up * (jumpForce * 0.5f), ForceMode.Impulse);
+        }
+    }
+
+
+
+    private void OnCollisionStay(Collision collision)
+    {
+        if (rb == null) return; // Rigidbody 없으면 무시
+        foreach (ContactPoint contact in collision.contacts)
+        {
+            // 위에서 닿았고, 실제로 거의 내려오는 중일 때만 착지 처리
+            if (Vector3.Dot(contact.normal, Vector3.up) > 0.7f && rb.linearVelocity.y <= 0.1f)
+            {
+                isGrounded = true;
+                hasJumped = false;
+                return;
+            }
+        }
+    }
+    private void CheckBlocked()
+    {
+        RaycastHit hit;
+        Vector3 origin = transform.position + Vector3.up * 0.5f; // 캐릭터 중간 높이
+        if (Physics.Raycast(origin, Vector3.forward, out hit, 1.0f))
+        {
+            if (hit.collider.CompareTag("Obstacle"))
+            {
+                isBlocked = true;
+                return;
+            }
+        }
+        isBlocked = false;
+    }
+    void FixedUpdate()
+    {
+        if (isDead || isStunned) return;
+
+        //rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, runSpeed);
+
+        // 앞으로 전진
+        Vector3 vel = rb.linearVelocity;
+        vel.z = runSpeed;   // 앞으로만 강제
+        vel.x = 0;          // 좌우는 레인 이동으로 제어
+        rb.linearVelocity = vel; // y는 그대로 유지 (점프 값 살림)
+
+        // 좌우 이동
+        Vector3 lanePos = new Vector3(targetPosition.x, rb.position.y, rb.position.z);
+        rb.MovePosition(Vector3.MoveTowards(rb.position, lanePos, laneChangeSpeed * Time.fixedDeltaTime));
+
+        // 중력 가속 보정
+        if (!isGrounded && rb.linearVelocity.y < 0)
+        {
+            rb.linearVelocity += Vector3.up * Physics.gravity.y * (fallMultiplier - 1) * Time.fixedDeltaTime;
+        }
+
+        // 앞 막힘 체크
+        CheckBlocked();
+    }
+    private void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Obstacle"))
+        {
+            isBlocked = false;  // 막힘 해제
+            Debug.Log("Obstacle 막힘 해제!");
+        }
+        // 또는 태그 없이 일반적인 충돌체에서 벗어날 때도 해제
+        StartCoroutine(DelayedBlockCheck());
+    }
+    // 약간의 딜레이 후 블록 상태 재확인
+    private IEnumerator DelayedBlockCheck()
+    {
+        yield return new WaitForSeconds(0.1f);
+
+        // 주변에 장애물이 없으면 블록 해제
+        Collider[] nearbyColliders = Physics.OverlapSphere(transform.position, 1.5f);
+        bool hasNearbyObstacle = false;
+
+        foreach (Collider col in nearbyColliders)
+        {
+            if (col != GetComponent<Collider>() && !col.isTrigger)
+            {
+                Vector3 direction = (transform.position - col.transform.position).normalized;
+                if (Vector3.Dot(direction, Vector3.forward) < 0.3f)
+                {
+                    hasNearbyObstacle = true;
+                    break;
+                }
+            }
+        }
+
+        if (!hasNearbyObstacle)
+        {
+            isBlocked = false;
+        }
+    }
+    void Die()
+    {
+        if (isDead) return;
+
+        isDead = true;
+        if (!rb.isKinematic)
+            rb.linearVelocity = Vector3.zero;
+        rb.isKinematic = true;
+
+        animator.SetTrigger("Die");
+
+        StartCoroutine(RespawnAfterDelay(1.9f));
+    }
+
+    IEnumerator RespawnAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        RespawnInstant();
+        isDead = false;
+    }
+    public void OnDieAnimationEnd()
+    {
+        // 애니메이션 끝났을 때 호출됨
+        RespawnInstant();
+    }
+
+  
+    void RespawnInstant()
+    {
+        Vector3 pos = respawnPoint.position;
+        RaycastHit hit;
+        if (Physics.Raycast(pos + Vector3.up * 5f, Vector3.down, out hit, 20f))
+        {
+            pos.y = hit.point.y + 0.01f;
+        }
+        rb.linearVelocity = Vector3.zero;
+        rb.isKinematic = true;              // 물리 잠깐 끄기
+        rb.MovePosition(pos);               // transform.position 대신 이거!
+        StartCoroutine(ReenablePhysics());  //
+
+        // Idle 상태로 되돌리기
+        animator.ResetTrigger("Die");      // 트리거 초기화
+        animator.SetInteger("animation", 34); // Idle 애니메이션 실행
+        animator.Play("Idle", 0, 0f);
+
+        isDead = false;
+    }
+    public void RespawnAt(Transform respawnPoint)
+    {
+        Vector3 pos = respawnPoint.position + Vector3.up * 5f;
+        RaycastHit hit;
+
+        if (Physics.Raycast(pos, Vector3.down, out hit, 20f))
+        {
+            pos = hit.point + Vector3.up * 0.1f; // 바닥 위
+        }
+
+        rb.linearVelocity = Vector3.zero;
+        rb.isKinematic = true;              // 물리 잠깐 끄기
+        rb.MovePosition(pos);               // 여기서도 MovePosition
+        StartCoroutine(ReenablePhysics());
+
+        animator.ResetTrigger("Die");
+        animator.SetInteger("animation", 34);
+        animator.Play("Idle", 0, 0f);
+
+        isDead = false;
+        // 무적 시간 1초 시작
+        invincibleTimer = 1f;
+    }
+    private IEnumerator ReenablePhysics()
+    {
+        yield return new WaitForFixedUpdate(); // 물리 프레임 한 번 기다린 뒤
+        rb.isKinematic = false;                // 다시 활성화
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (invincibleTimer > 0f)
+            return; // 무적 상태라면 충돌 무시
+
+    }
+   
+}
