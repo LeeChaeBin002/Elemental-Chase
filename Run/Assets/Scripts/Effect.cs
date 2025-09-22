@@ -14,7 +14,6 @@ public class Effect : MonoBehaviour
     //[Header("Prefabs")]
     //public GameObject projectilePrefab;
 
-   
     void OnTriggerEnter(Collider other)
     {
         if (effectData == null) return;
@@ -65,14 +64,32 @@ public class Effect : MonoBehaviour
                     pm.ApplyBlind(3f); //머드칠: 3초간 시야 차단
                     break;
             }
-                    Debug.Log($"[효과 발동]\n" +
+
+            // 맵 오브젝트 ID로 특수 효과 처리
+            switch (effectData.id)
+            {
+                case 402007: // 파이어볼 구슬
+                    EnemyHealth[] allEnemies = FindObjectsOfType<EnemyHealth>();
+                    foreach (var enemy in allEnemies)
+                    {
+                        if (enemy != null)
+                        {
+                            int damage = Mathf.CeilToInt(enemy.maxHp * 0.05f);
+                            enemy.TakeDamage(damage);
+                            Debug.Log($"[파이어볼 구슬 발동] {enemy.name} → 최대 HP의 5%({damage}) 피해");
+                        }
+                    }
+                    Destroy(gameObject); // 구슬은 1회용
+                    break;
+            }
+            Debug.Log($"[효과 발동]\n" +
                     $"- Name: {effectData.name}\n" +
                     $"- ID: {effectData.id}\n" +
                     $"- BuffId: {effectData.buffId}\n" +
                     $"- StateId: {effectData.stateId}\n" +
                     $"- Desc: {effectData.description}");
 
-                //Debug.Log($"{effectData.name} 발동 → {effectData.description}");
+              
             }
 
         
