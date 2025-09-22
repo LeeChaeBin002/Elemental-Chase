@@ -4,16 +4,7 @@ public class Effect : MonoBehaviour
 {
     public MapObject effectData;
     private float originalSpeed;
-
-    //[Header("이펙트 프리팹")]
-    //public GameObject explosionEffectPrefab;
-
-    //[Header("Fire Point")]
-    //public Transform firePoint;   // 투사체가 발사될 위치
-
-    //[Header("Prefabs")]
-    //public GameObject projectilePrefab;
-
+    
     void OnTriggerEnter(Collider other)
     {
         if (effectData == null) return;
@@ -125,7 +116,7 @@ public class Effect : MonoBehaviour
 
         if (effectData.buffId == 324040) // 바위 (충돌형 → 3초간 느려짐)
         {
-            pm.ApplyTimedSlow(0.6f, 3f);
+            pm.ApplyRockSlow(0.6f, 3f);
             Debug.Log("바위 충돌 → 3초간 40% 감속");
         }
     }

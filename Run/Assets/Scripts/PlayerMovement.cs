@@ -5,7 +5,6 @@ using UnityEngine.UI;
 public class PlayerMovement : MonoBehaviour
 {
     public Animator animator;
-
     public float runSpeed = 10f;
     private float baseSpeed;
     private int slowCount = 0;
@@ -51,6 +50,12 @@ public class PlayerMovement : MonoBehaviour
     public GameObject debuffEffectPrefab;
 
     private GameObject activeEffect;
+
+    public GameObject stunEffectPrefab;   // 🔹 Inspector에서 연결할 스턴 이펙트 프리팹
+    private GameObject activeStunEffect;  // 현재 실행 중인 이펙트
+   
+    public Vector3 stunOffset = new Vector3(0, 0.3f, 0); // Inspector에서 조절 가능
+
     void Start()
     {
         rb = GetComponent<UnityEngine.Rigidbody>();
@@ -196,12 +201,7 @@ public class PlayerMovement : MonoBehaviour
         }
         Debug.Log("[도트 피해 종료]");
     }
-    private IEnumerator RemoveBuffAfter(float duration)
-    {
-        yield return new WaitForSeconds(duration);
-        runSpeed = baseSpeed;
-        Debug.Log("[캐릭터 스킬 종료] 기존으로 복구");
-    }
+  
     private IEnumerator SkillCooldownRoutine()
     {
         canUseSkill = false;
@@ -236,7 +236,7 @@ public class PlayerMovement : MonoBehaviour
 
     public void ApplySlow(float multiplier)
     {
-        //slowCount++;
+        
         runSpeed = baseSpeed * multiplier;
         PlayEffect(debuffEffectPrefab);
         Debug.Log($"[슬로우 적용] {multiplier * 100}% 속도로 변경");
@@ -249,6 +249,55 @@ public class PlayerMovement : MonoBehaviour
         runSpeed = baseSpeed;
         Debug.Log("[슬로우 종료] 기본 속도로 복구");
     }
+    // 🔹 바위 전용: 슬로우 + 스턴 이펙트만
+    public void ApplyRockSlow(float multiplier, float duration)
+    {
+        StopCoroutine(nameof(RockSlowCoroutine));
+        StartCoroutine(RockSlowCoroutine(multiplier, duration));
+    }
+    private IEnumerator RockSlowCoroutine(float multiplier, float duration)
+    {
+        runSpeed = baseSpeed * multiplier;
+        PlayStunEffect(duration);   // 🔹 스턴 이펙트만 표시 (디버프 이펙트 X)
+
+        Debug.Log($"[바위 슬로우] {multiplier * 100}% 속도로 변경 ({duration}초)");
+
+        yield return new WaitForSeconds(duration);
+
+        runSpeed = baseSpeed;
+        Debug.Log("[바위 슬로우 종료] 기본 속도로 복구");
+    }
+
+    private void PlayStunEffect(float duration)
+    {
+        // 중복 제거
+        if (activeStunEffect != null)
+        {
+            Destroy(activeStunEffect);
+            activeStunEffect = null;
+        }
+        if (stunEffectPrefab == null) return;
+        // 캐릭터 콜라이더 높이 기준으로 머리 위 위치 계산
+        float height = 1f;
+        Collider col = GetComponent<Collider>();
+        if (col != null)
+            height = col.bounds.size.y * 0.2f;
+
+        // 머리 위에 스턴 이펙트 생성
+        activeStunEffect = Instantiate(stunEffectPrefab, transform);
+
+        // 머리 위 (Pivot + 높이 + 오프셋)
+        activeStunEffect.transform.localPosition = Vector3.up * height + stunOffset;
+
+        // -90° 회전 적용
+        activeStunEffect.transform.localRotation = Quaternion.Euler(-90f, 0f, 0f);
+
+        // 크기 조절 (필요 시)
+        activeStunEffect.transform.localScale = Vector3.one * 1.5f;
+
+        // 자동 제거
+        Destroy(activeStunEffect, duration);
+    }
     // 🔹 일정 시간 후 자동 해제되는 슬로우 (바위 같은 경우)
     public void ApplyTimedSlow(float multiplier, float duration)
     {
@@ -259,6 +308,8 @@ public class PlayerMovement : MonoBehaviour
     {
         runSpeed = baseSpeed * multiplier;
         PlayEffect(debuffEffectPrefab);
+        PlayStunEffect(duration);
+
         Debug.Log($"[슬로우 적용] {multiplier * 100}% 속도로 변경 ({duration}초)");
 
         yield return new WaitForSeconds(duration);
