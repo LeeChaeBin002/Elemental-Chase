@@ -22,7 +22,7 @@ public class PlayerMovement : MonoBehaviour
     public VirtualJoystick joystick; // 조이스틱 연결용
     public Button jumpButton;
 
-    public float fallMultiplier = 2.5f; // 낙하 가속 배율
+    public float fallMultiplier = 30f; // 낙하 가속 배율
 
     //private float keyHoldTime = 0f;
     private UnityEngine.Rigidbody rb;
@@ -66,6 +66,7 @@ public class PlayerMovement : MonoBehaviour
     public UniversalRendererData rendererData;
     private ScriptableRendererFeature speedFeature;
 
+    private float obstacleHeight = 0f;
     void Start()
     {
         rb = GetComponent<UnityEngine.Rigidbody>();
@@ -209,7 +210,7 @@ public class PlayerMovement : MonoBehaviour
     private void SetSpeedEffect(bool enabled)
     {
         Debug.Log($"[SetSpeedEffect 호출됨] enabled={enabled}, speedFeature={(speedFeature != null ? speedFeature.name : "NULL")}");
-        
+
         if (speedFeature != null)
         {
             speedFeature.SetActive(enabled);
@@ -234,7 +235,7 @@ public class PlayerMovement : MonoBehaviour
         // 선형 보간
         float t = Mathf.InverseLerp(minMultiplier, maxMultiplier, multiplier);
         return Mathf.Lerp(maxFOV, minFOV, t);
-        }
+    }
     private IEnumerator ChangeFOV(float targetFOV, float duration)
     {
         float startFOV = cineCam.Lens.FieldOfView;
@@ -501,7 +502,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Jump()
     {
-        if (isDead) return;
+
         if (isDead || isStunned) return;
 
         if (!hasJumped && (isGrounded || isBlocked))
@@ -518,18 +519,22 @@ public class PlayerMovement : MonoBehaviour
 
             if (isBlocked)
             {
-                // Scale.y = 1 → 높이 1m 장애물
-                float requiredJump = Mathf.Sqrt(2 * Mathf.Abs(Physics.gravity.y) * 1.3f);
-                force = Mathf.Max(force, requiredJump); // 최소 4.5 이상 보정
-                Debug.Log($" 장애물 앞 점프! force={force}");
+                rb.linearVelocity = new Vector3(0f, 0f, 0f);
+                // 높은 점프 (장애물 넘기 위해 보정)
+                float requiredJump = Mathf.Sqrt(2 * Mathf.Abs(Physics.gravity.y) * (obstacleHeight + 0.2f));
+                force = requiredJump;
+                // 너무 높이 뜨지 않게 상한선 걸기
+                force = Mathf.Min(force, jumpForce * 0.8f);
+
+                Debug.Log($"장애물 점프! 높이={obstacleHeight:F2}, force={force:F2}");
             }
             else
             {
+                rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
                 Debug.Log("일반 점프");
             }
 
-            // y속도 초기화 후 점프
-            rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+
             rb.AddForce(Vector3.up * force, ForceMode.Impulse);
         }
 
@@ -572,20 +577,28 @@ public class PlayerMovement : MonoBehaviour
             if (hit.collider.CompareTag("Obstacle"))
             {
                 isBlocked = true;
+                obstacleHeight = hit.collider.bounds.size.y;
                 return;
             }
         }
         isBlocked = false;
+        obstacleHeight = 0f;
     }
     void FixedUpdate()
     {
         if (isDead || isStunned) return;
 
-        //rb.linearVelocity = new Vector3(0, rb.linearVelocity.y, runSpeed);
-
         // 앞으로 전진
         Vector3 vel = rb.linearVelocity;
-        vel.z = runSpeed;   // 앞으로만 강제
+
+        if (isBlocked)
+        {
+            vel.z = 0f; // 막혔으면 앞으로 안 나가게 고정
+        }
+        else
+        {
+            vel.z = runSpeed; // 평소엔 앞으로 진행
+        }
         vel.x = 0;          // 좌우는 레인 이동으로 제어
         rb.linearVelocity = vel; // y는 그대로 유지 (점프 값 살림)
 
@@ -721,4 +734,4 @@ public class PlayerMovement : MonoBehaviour
 
     }
 
-}
+}
