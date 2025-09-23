@@ -586,7 +586,13 @@ public class PlayerMovement : MonoBehaviour
     }
     void FixedUpdate()
     {
-        if (isDead || isStunned) return;
+        if (isDead ) return;
+
+        if (isStunned)
+        {
+            rb.linearVelocity = Vector3.zero;  // 스턴 동안 아예 정지
+            return; // 아래 이동 로직 실행 안 함
+        }
 
         // 앞으로 전진
         Vector3 vel = rb.linearVelocity;
