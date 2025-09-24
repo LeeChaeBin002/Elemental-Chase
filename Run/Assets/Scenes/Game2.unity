@@ -11427,7 +11427,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.17818777, y: -0.0008280446, z: 0.00014994714, w: 0.98399615}
+  m_LocalRotation: {x: 0.17818777, y: -0.00077357877, z: 0.00014008417, w: 0.9839962}
   m_LocalPosition: {x: 0, y: 5.49, z: -8.08}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -54497,6 +54497,8 @@ MonoBehaviour:
   skillCooldownSlider: {fileID: 6390479444016344247}
   skillCooldown: 3
   speedEffectMat: {fileID: 2100000, guid: 75956baed910ed0418aba48fd40be04e, type: 2}
+  jumpHeight: 2.5
+  jumpDuration: 1
   fallSpeed: 10
   respawnPoint: {fileID: 346471082}
   buffEffectPrefab: {fileID: 419411002348774512, guid: 0123b6a53ce44434b9502d73aefc1a0a, type: 3}
@@ -56505,7 +56507,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1704566472}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.17818776, y: -0.0008280444, z: 0.00014994708, w: 0.9839962}
+  m_LocalRotation: {x: 0.17818776, y: -0.0007735787, z: 0.00014008414, w: 0.9839962}
   m_LocalPosition: {x: 0, y: 5.49, z: -8.08}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0

@@ -34,7 +34,10 @@ public class PlayerMovement : MonoBehaviour
     public float skillCooldown = 5f; // 기본 쿨타임 (초)
     [Header("Effects")]
     public Material speedEffectMat;
-
+    [Header("Jump Settings")]
+    public float jumpHeight = 5f;   // Inspector에서 높이 조절 가능
+    public float jumpDuration = 0.6f; // 점프 시간도 함께 조절 가능
+    
     private int currentLane = 1;
     private Vector3 targetPosition;
 
@@ -521,42 +524,87 @@ public class PlayerMovement : MonoBehaviour
     void Jump()
     {
 
-        if (isDead || isStunned) return;
+        if (isDead || isStunned || hasJumped) return;
 
-        if (!hasJumped && (isGrounded || isBlocked))
+        hasJumped = true;
+        isGrounded = false;
+        animator.SetTrigger("Jump");
+
+        Vector3 start = transform.position;
+
+
+        if (isBlocked)
         {
-            hasJumped = true;
-            isGrounded = false;
-
-            animator.SetTrigger("Jump");
-
-            // 기본 점프 힘
-            float force = jumpForce;
-
-
-
-            if (isBlocked)
+            isBlocked = false;
+            // 🔹 Raycast로 장애물 윗면 좌표 가져오기
+            RaycastHit hit;
+            Vector3 rayOrigin = transform.position + Vector3.up * 1f; // 캐릭터 중심에서 레이 발사
+            if (Physics.Raycast(rayOrigin, Vector3.forward, out hit, 3f))
             {
-                rb.linearVelocity = new Vector3(0f, 0f, 0f);
-                // 높은 점프 (장애물 넘기 위해 보정)
-                float requiredJump = Mathf.Sqrt(2 * Mathf.Abs(Physics.gravity.y) * (obstacleHeight + 0.2f));
-                force = requiredJump;
-                // 너무 높이 뜨지 않게 상한선 걸기
-                force = Mathf.Min(force, jumpForce * 0.8f);
-
-                Debug.Log($"장애물 점프! 높이={obstacleHeight:F2}, force={force:F2}");
+                if (hit.collider.CompareTag("Obstacle"))
+                {
+                    // 장애물 중앙 위 지점
+                    Bounds bounds = hit.collider.bounds;
+                    Vector3 end = new Vector3(bounds.center.x,
+                                              bounds.max.y,  // 윗면 높이
+                                              bounds.max.z);
+                    StartCoroutine(ParabolaJump(start, end, jumpHeight, jumpDuration));
+                    Debug.Log($"[장애물 점프] end={end}, jumpHeight={jumpHeight}");
+                    return;
+                }
             }
-            else
-            {
-                rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
-                Debug.Log("일반 점프");
-            }
-
-
-            rb.AddForce(Vector3.up * force, ForceMode.Impulse);
         }
 
 
+        // 🔹 일반 점프
+        Vector3 normalEnd = start + Vector3.forward * 8f;
+        StartCoroutine(ParabolaJump(start, normalEnd, jumpHeight, jumpDuration));
+        Debug.Log("[일반 점프]");
+
+    }
+    IEnumerator ParabolaJump(Vector3 start, Vector3 end, float height, float duration)
+    {
+        rb.isKinematic = true; // 물리 끄기
+        float t = 0f;
+
+        while (t < 1f)
+        {
+            t += Time.deltaTime / duration;
+
+            // 최고점 height 보장되는 포물선
+            float parabola = 4 * height * t * (1 - t);
+
+            Vector3 pos = Vector3.Lerp(start, end, t);
+            pos.y += parabola;
+
+            rb.MovePosition(pos);
+            yield return null;
+        }
+        // 🔹 최종 위치 스냅 (안정적인 착지)
+        rb.MovePosition(end + Vector3.up * 0.01f);
+
+        rb.isKinematic = false; // 다시 물리 켜기
+        isGrounded = true;
+        hasJumped = false;
+    }
+    private void CheckGround()
+    {
+        RaycastHit hit;
+        Vector3 origin = transform.position + Vector3.up * 0.1f;
+
+        // 🔹 아래 방향 레이캐스트
+        if (Physics.Raycast(origin, Vector3.down, out hit, 2f))
+        {
+            // 바닥이나 장애물 위
+            if (hit.collider.CompareTag("Untagged") || hit.collider.CompareTag("Obstacle"))
+            {
+                isGrounded = true;
+                return;
+            }
+        }
+
+        // 바닥 없으면 낙하 시작
+        isGrounded = false;
     }
     // 점프 직후 추가 힘을 적용하는 코루틴
     private IEnumerator ApplyExtraJumpForce()
@@ -611,6 +659,7 @@ public class PlayerMovement : MonoBehaviour
             rb.linearVelocity = Vector3.zero;  // 스턴 동안 아예 정지
             return; // 아래 이동 로직 실행 안 함
         }
+        if (rb.isKinematic) return;
 
         // 앞으로 전진
         Vector3 vel = rb.linearVelocity;
@@ -637,7 +686,8 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // 앞 막힘 체크
-        CheckBlocked();
+        // CheckBlocked();
+        CheckGround();
     }
     private void OnCollisionExit(Collision collision)
     {
