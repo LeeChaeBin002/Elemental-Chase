@@ -70,6 +70,21 @@ public class Effect : MonoBehaviour
                             Debug.Log($"[파이어볼 구슬 발동] {enemy.name} → 최대 HP의 5%({damage}) 피해");
                         }
                     }
+
+                    Destroy(gameObject); // 구슬은 1회용
+                    break;
+
+                case 402008: // 메가 파이어볼 구슬
+                    EnemyHealth[] megaEnemies = FindObjectsOfType<EnemyHealth>();
+                    foreach (var enemy in megaEnemies)
+                    {
+                        if (enemy != null)
+                        {
+                            int damage = Mathf.CeilToInt(enemy.maxHp * 0.10f); // 🔹 10% 피해
+                            enemy.TakeDamage(damage);
+                            Debug.Log($"[메가 파이어볼 구슬 발동] {enemy.name} → 최대 HP의 10%({damage}) 피해");
+                        }
+                    }
                     Destroy(gameObject); // 구슬은 1회용
                     break;
             }
