@@ -37,7 +37,7 @@ public class PlayerMovement : MonoBehaviour
     [Header("Jump Settings")]
     public float jumpHeight = 5f;   // Inspector에서 높이 조절 가능
     public float jumpDuration = 0.6f; // 점프 시간도 함께 조절 가능
-    
+
     private int currentLane = 1;
     private Vector3 targetPosition;
 
@@ -531,59 +531,63 @@ public class PlayerMovement : MonoBehaviour
         animator.SetTrigger("Jump");
 
         Vector3 start = transform.position;
+        RaycastHit hit;
+        Vector3 rayOrigin = transform.position + Vector3.up * 1f;
 
-
-        if (isBlocked)
+        if (Physics.Raycast(rayOrigin, Vector3.forward, out hit, 5f, LayerMask.GetMask("Obstacle")))
         {
-            isBlocked = false;
-            // 🔹 Raycast로 장애물 윗면 좌표 가져오기
-            RaycastHit hit;
-            Vector3 rayOrigin = transform.position + Vector3.up * 1f; // 캐릭터 중심에서 레이 발사
-            if (Physics.Raycast(rayOrigin, Vector3.forward, out hit, 3f))
+            Bounds bounds = hit.collider.bounds;
+            float obstacleTopY = bounds.max.y;
+            float obstacleHeight = obstacleTopY - transform.position.y;
+
+            float maxJumpHeight = 6f; // 플레이어가 낼 수 있는 최대 점프치
+
+            float dynamicJumpHeight;
+
+            if (obstacleHeight <= maxJumpHeight)
             {
-                if (hit.collider.CompareTag("Obstacle"))
-                {
-                    // 장애물 중앙 위 지점
-                    Bounds bounds = hit.collider.bounds;
-                    Vector3 end = new Vector3(bounds.center.x,
-                                              bounds.max.y,  // 윗면 높이
-                                              bounds.max.z);
-                    StartCoroutine(ParabolaJump(start, end, jumpHeight, jumpDuration));
-                    Debug.Log($"[장애물 점프] end={end}, jumpHeight={jumpHeight}");
-                    return;
-                }
+                // 장애물을 넘을 수 있는 높이 → 높이에 맞춰 점프
+                dynamicJumpHeight = obstacleHeight + 1f;
+                Debug.Log($"[Jump] 장애물 높이에 맞춰 점프 → {dynamicJumpHeight}");
             }
+            else
+            {
+                // 너무 높은 경우 → 그냥 기본 점프 높이로만
+                dynamicJumpHeight = jumpHeight;
+                Debug.Log($"[Jump] 장애물 너무 높음 → 기본 점프 ({dynamicJumpHeight})");
+            }
+
+            Vector3 end = new Vector3(bounds.center.x, bounds.max.y, bounds.max.z);
+            StartCoroutine(ParabolaJump(start, end, dynamicJumpHeight, jumpDuration));
+            return;
         }
 
-
-        // 🔹 일반 점프
+        // 🔹 장애물이 없는 경우 → 일반 점프
         Vector3 normalEnd = start + Vector3.forward * 8f;
         StartCoroutine(ParabolaJump(start, normalEnd, jumpHeight, jumpDuration));
         Debug.Log("[일반 점프]");
-
     }
     IEnumerator ParabolaJump(Vector3 start, Vector3 end, float height, float duration)
     {
         rb.isKinematic = true; // 물리 끄기
-        float t = 0f;
+        yield return new WaitForFixedUpdate();
+        rb.isKinematic = false;
 
-        while (t < 1f)
+        float elapsed = 0f;
+
+        while (elapsed < duration)
         {
-            t += Time.deltaTime / duration;
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
 
-            // 최고점 height 보장되는 포물선
             float parabola = 4 * height * t * (1 - t);
-
             Vector3 pos = Vector3.Lerp(start, end, t);
             pos.y += parabola;
 
-            rb.MovePosition(pos);
+            rb.MovePosition(pos); // 여전히 MovePosition, 하지만 충돌은 살아있음
             yield return null;
         }
-        // 🔹 최종 위치 스냅 (안정적인 착지)
-        rb.MovePosition(end + Vector3.up * 0.01f);
 
-        rb.isKinematic = false; // 다시 물리 켜기
         isGrounded = true;
         hasJumped = false;
     }
@@ -652,7 +656,7 @@ public class PlayerMovement : MonoBehaviour
     }
     void FixedUpdate()
     {
-        if (isDead ) return;
+        if (isDead) return;
 
         if (isStunned)
         {
@@ -685,9 +689,54 @@ public class PlayerMovement : MonoBehaviour
             rb.linearVelocity += Vector3.up * Physics.gravity.y * (fallMultiplier - 1) * Time.fixedDeltaTime;
         }
 
-        // 앞 막힘 체크
-        // CheckBlocked();
+        
         CheckGround();
+        SnapToGround();
+        StickToGround();
+    }
+    private void SnapToGround()
+    {
+        RaycastHit hit;
+        Vector3 origin = transform.position + Vector3.up * 0.5f;
+
+        if (Physics.Raycast(origin, Vector3.down, out hit, 2f, LayerMask.GetMask("Untagged", "Obstacle")))
+        {
+            float groundY = hit.point.y;
+
+            // 작은 단차(예: 0.5m 이하)는 자동 스냅
+            if (rb.position.y - groundY < 0.5f)
+            {
+                Vector3 pos = rb.position;
+                pos.y = Mathf.Lerp(rb.position.y, groundY + 0.01f, 0.5f); // 부드럽게
+                rb.MovePosition(pos);
+                isGrounded = true;
+                hasJumped = false;
+            }
+        }
+    }
+    private void StickToGround()
+    {
+        // 점프 중이면 무시
+        if (hasJumped) return;
+
+        // 플레이어 발 밑으로 레이 쏘기
+        RaycastHit hit;
+        Vector3 origin = transform.position + Vector3.up * 0.5f;
+
+        if (Physics.Raycast(origin, Vector3.down, out hit, 2f, LayerMask.GetMask("Floor", "Obstacle")))
+        {
+            float distance = transform.position.y - hit.point.y;
+
+            // 너무 붕 뜨면 강제로 붙여주기
+            if (distance > 0.05f && distance < 1.0f)
+            {
+                Vector3 pos = rb.position;
+                pos.y = hit.point.y + 0.01f;   // 살짝 띄워서 보정
+                rb.MovePosition(pos);
+                rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
+                isGrounded = true;
+            }
+        }
     }
     private void OnCollisionExit(Collision collision)
     {
