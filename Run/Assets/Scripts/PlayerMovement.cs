@@ -557,8 +557,8 @@ public class PlayerMovement : MonoBehaviour
                 Debug.Log($"[Jump] 장애물 너무 높음 → 기본 점프 ({dynamicJumpHeight})");
             }
 
-            Vector3 end = new Vector3(bounds.center.x, bounds.max.y, bounds.max.z);
-            StartCoroutine(ParabolaJump(start, end, dynamicJumpHeight, jumpDuration));
+            Vector3 end = new Vector3(bounds.center.x, bounds.max.y, bounds.center.z + 0.5f);
+            StartCoroutine(ParabolaJump(start, end, jumpHeight, jumpDuration));
             return;
         }
 
@@ -579,12 +579,15 @@ public class PlayerMovement : MonoBehaviour
         {
             elapsed += Time.deltaTime;
             float t = elapsed / duration;
-
-            float parabola = 4 * height * t * (1 - t);
+            // 🔹 XZ는 그대로 선형 보간
             Vector3 pos = Vector3.Lerp(start, end, t);
-            pos.y += parabola;
 
-            rb.MovePosition(pos); // 여전히 MovePosition, 하지만 충돌은 살아있음
+            // 🔹 Y는 (start.y ~ end.y) 선형 보간 + 포물선 높이
+            float baseY = Mathf.Lerp(start.y, end.y, t);
+            float parabola = 4 * height * t * (1 - t); // 최대 height까지 뜸
+            pos.y = baseY + parabola;
+
+            rb.MovePosition(pos);
             yield return null;
         }
 

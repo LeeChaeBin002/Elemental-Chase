@@ -12,6 +12,7 @@ public class EnemyHealth : MonoBehaviour
 
     [Header("UI")]
     public Slider hpBar;
+    public Slider uiHpBar;
 
     [Header("Effects")]
     public GameObject stunEffectPrefab;   // 🔹 Inspector에서 연결할 스턴 이펙트 프리팹
@@ -23,9 +24,18 @@ public class EnemyHealth : MonoBehaviour
         currentHp = maxHp;
         enemyMove = GetComponent<EnemyMove>();
 
+        // 초기화 (둘 다 있으면 같이)
         if (hpBar != null)
+        {
             hpBar.maxValue = maxHp;
-        hpBar.value = currentHp;
+            hpBar.value = currentHp;
+        }
+
+        if (uiHpBar != null)
+        {
+            uiHpBar.maxValue = maxHp;
+            uiHpBar.value = currentHp;
+        }
     }
 
     public void TakeDamage(int amount)
@@ -38,9 +48,16 @@ public class EnemyHealth : MonoBehaviour
 
         if (hpBar != null)
             hpBar.value = currentHp;
+        if (uiHpBar != null)
+        {
+            uiHpBar.value = currentHp;
+            Debug.Log($"[EnemyHealth] UI HpBar 즉시 갱신: {uiHpBar.value}/{uiHpBar.maxValue}");
+
+        }
 
         if (currentHp <= 0)
         {
+            Debug.Log("[EnemyHealth] 체력 0 → 스턴 코루틴 시작");
             StartCoroutine(StunAndRespawn());
         }
     }
@@ -63,11 +80,19 @@ public class EnemyHealth : MonoBehaviour
         // 2) 체력 회복
         currentHp = maxHp;
 
-      
-        // 🔹 HP바를 부드럽게 회복
-        if (hpBar != null)
-            StartCoroutine(FillHpBarSmooth(currentHp, 0.5f));
 
+        // 🔹 체력바 즉시 100으로 세팅
+        if (hpBar != null)
+        {
+            hpBar.maxValue = maxHp;
+            StartCoroutine(FillHpBarSmooth(hpBar, currentHp, 0.5f));
+        }
+        if (uiHpBar != null)
+        {
+            uiHpBar.maxValue = maxHp;
+            StartCoroutine(FillHpBarSmooth(uiHpBar, currentHp, 0.5f));
+            Debug.Log($"[EnemyHealth] UI HpBar 갱신 완료: {uiHpBar.value}/{uiHpBar.maxValue}");
+        }
         // 3) 이동 재개
         if (enemyMove != null)
             enemyMove.SetStunned(false);
@@ -76,18 +101,20 @@ public class EnemyHealth : MonoBehaviour
         isDead = false;
         Debug.Log("[Enemy] 부활 완료! 체력 회복");
     }
-    private IEnumerator FillHpBarSmooth(int targetValue, float duration)
+    private IEnumerator FillHpBarSmooth(Slider bar, int targetValue, float duration)
     {
-        float startValue = hpBar.value;
+        if (bar == null) yield break;
+
+        float startValue = bar.value;
         float time = 0f;
 
         while (time < duration)
         {
             time += Time.deltaTime;
-            hpBar.value = Mathf.Lerp(startValue, targetValue, time / duration);
+            bar.value = Mathf.Lerp(startValue, targetValue, time / duration);
             yield return null;
         }
-        hpBar.value = targetValue; // 마지막 보정
+        bar.value = targetValue;
     }
     private void PlayStunEffect()
     {
