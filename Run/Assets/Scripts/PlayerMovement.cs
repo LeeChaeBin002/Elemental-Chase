@@ -52,8 +52,9 @@ public class PlayerMovement : MonoBehaviour
     public GameObject buffEffectPrefab;   // 버프 이펙트
     public GameObject debuffEffectPrefab;
 
-    private GameObject activeEffect;
+    [Header("Effects")]
 
+    private GameObject activeEffect;
     public GameObject stunEffectPrefab;   // 🔹 Inspector에서 연결할 스턴 이펙트 프리팹
     private GameObject activeStunEffect;  // 현재 실행 중인 이펙트
 
@@ -65,6 +66,8 @@ public class PlayerMovement : MonoBehaviour
     private Coroutine fovCoroutine;
     public UniversalRendererData rendererData;
     private ScriptableRendererFeature speedFeature;
+
+
 
     private float obstacleHeight = 0f;
     void Start()
@@ -436,6 +439,7 @@ public class PlayerMovement : MonoBehaviour
     }
     void Update()
     {
+        if (isStunned) return;
         // 좌우 레인 변경 (키보드 입력 예시: A=왼쪽, D=오른쪽)
         if (Input.GetKeyDown(KeyCode.A))
             ChangeLane(-1);
@@ -484,8 +488,22 @@ public class PlayerMovement : MonoBehaviour
         isStunned = true;
         rb.linearVelocity = Vector3.zero;
         animator.SetInteger("animation", 34);
+        // 스턴 이펙트 표시
+        PlayStunEffect(duration);
+        Debug.Log($"[Player] 스턴 상태 ({duration}초)");
         yield return new WaitForSeconds(duration);
+
         isStunned = false;
+        StopStunEffect();
+        Debug.Log("[Player] 스턴 해제");
+    }
+    private void StopStunEffect()
+    {
+        if (activeStunEffect != null)
+        {
+            Destroy(activeStunEffect);
+            activeStunEffect = null;
+        }
     }
     public void ApplyBlind(float duration)//시야가려짐
     {
