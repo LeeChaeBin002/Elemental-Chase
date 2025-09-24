@@ -70,11 +70,19 @@ public class PlayerMovement : MonoBehaviour
     public UniversalRendererData rendererData;
     private ScriptableRendererFeature speedFeature;
 
-
-
     private float obstacleHeight = 0f;
+
+    private void Awake()
+    {
+        // 런타임 전용 인스턴스 생성
+      
+            speedEffectMat = new Material(speedEffectMat);
+    }
+
+
     void Start()
     {
+       
         rb = GetComponent<UnityEngine.Rigidbody>();
         baseSpeed = runSpeed;
 
@@ -99,6 +107,11 @@ public class PlayerMovement : MonoBehaviour
             Debug.Log("[OK] SpeedFeature 연결 성공!");
         else
             Debug.LogError("[ERROR] SpeedFeature 못 찾음");
+
+        SetSpeedEffect(false);
+
+        if (speedEffectMat != null)
+            speedEffectMat.SetFloat("_Distortion", 0f);
     }
 
     // ElementDataLoader에서 스킬을 전달받을 함수
@@ -187,23 +200,27 @@ public class PlayerMovement : MonoBehaviour
     {
         float original = runSpeed;
         runSpeed = baseSpeed * multiplier;
-        PlayEffect(buffEffectPrefab);
-        Debug.Log($"[버프] 이속 {multiplier * 100}% ({duration}초)");
+
+        // 🔹 효과용 Material 활성화
+        SetSpeedEffect(true);
+
 
         // 🔹 카메라 줌인 (FOV 30으로)
         if (cineCam != null)
         {
             if (fovCoroutine != null) StopCoroutine(fovCoroutine);
-            float targetFOV = CalculateTargetFOV(multiplier);
+           
             fovCoroutine = StartCoroutine(ChangeFOV(30f, 0.5f)); // 0.5초 동안 줌인
         }
-
-        SetSpeedEffect(true);   // 켜기
+        // 🔹 쉐이더 강도 올리기
+        StartCoroutine(AnimateSpeedShader(0.4f, 0.5f));
+        Debug.Log($"[버프] 이속 {multiplier * 100}% ({duration}초)");
+        
         yield return new WaitForSeconds(duration);
-        SetSpeedEffect(false);  // 끄기
 
         runSpeed = original;
-        StopEffect();
+        SetSpeedEffect(false);  // 끄기
+      
         Debug.Log("[버프 종료] 기본 속도로 복귀");
         // 🔹 카메라 줌아웃 (기본값으로 되돌림)
         if (cineCam != null)
@@ -211,21 +228,21 @@ public class PlayerMovement : MonoBehaviour
             if (fovCoroutine != null) StopCoroutine(fovCoroutine);
             fovCoroutine = StartCoroutine(ChangeFOV(defaultFOV, 0.5f)); // 0.5초 동안 복구
         }
-
+        // 🔹 쉐이더 강도 내리기
+        StartCoroutine(AnimateSpeedShader(0f, 0.5f));
     }
     private void SetSpeedEffect(bool enabled)
     {
         Debug.Log($"[SetSpeedEffect 호출됨] enabled={enabled}, speedFeature={(speedFeature != null ? speedFeature.name : "NULL")}");
 
-        if (speedFeature != null)
+        if (speedFeature == null)
         {
-            speedFeature.SetActive(enabled);
-            Debug.Log($"[RendererFeature 적용됨] {speedFeature.name} → {enabled}");
+            Debug.LogWarning("[SetSpeedEffect] speedFeature 아직 연결 안됨");
+            return;
         }
-        else
-        {
-            Debug.LogError("[ERROR] speedFeature == null (rendererData 연결 안됨)");
-        }
+
+        speedFeature.SetActive(enabled);
+        Debug.Log($"[RendererFeature 적용됨] {speedFeature.name} → {enabled}");
     }
 
     // 배율 → 타겟 FOV 계산 함수
@@ -859,5 +876,21 @@ public class PlayerMovement : MonoBehaviour
             return; // 무적 상태라면 충돌 무시
 
     }
+    private IEnumerator AnimateSpeedShader(float targetValue, float duration)
+    {
+        if (speedEffectMat == null) yield break;
+        float startValue = speedEffectMat.GetFloat("Distortion");
+        float time = 0f;
 
+        while (time < duration)
+        {
+            time += Time.deltaTime;
+            float newValue = Mathf.Lerp(startValue, targetValue, time / duration);
+            speedEffectMat.SetFloat("Distortion", newValue);
+
+            Debug.Log($"[Shader Distortion] {newValue}"); // 👈 값 변화 확인
+            yield return null;
+        }
+        speedEffectMat.SetFloat("Distortion", targetValue);
+    }
 }
