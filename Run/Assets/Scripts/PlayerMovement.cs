@@ -13,7 +13,7 @@ public class PlayerMovement : MonoBehaviour
     public float laneOffset = 3f;
     public float jumpForce = 5f;
     public float laneChangeSpeed = 10f;//레인 이동속도
-
+    private float fallTimer = 0f;//낙하 추적
 
     private bool isStunned = false;
 
@@ -32,6 +32,8 @@ public class PlayerMovement : MonoBehaviour
     public Slider skillCooldownSlider;  //쿨타임 시 오버레이
     private bool canUseSkill = true; // 쿨타임 체크
     public float skillCooldown = 5f; // 기본 쿨타임 (초)
+    public GameObject gameOverUI;
+
     [Header("Effects")]
     public Material speedEffectMat;
     [Header("Jump Settings")]
@@ -459,7 +461,8 @@ public class PlayerMovement : MonoBehaviour
     }
     void Update()
     {
-        if (isStunned) return;
+        if (isStunned || isDead) return;
+        
         // 좌우 레인 변경 (키보드 입력 예시: A=왼쪽, D=오른쪽)
         if (Input.GetKeyDown(KeyCode.A))
             ChangeLane(-1);
@@ -478,7 +481,29 @@ public class PlayerMovement : MonoBehaviour
             Die();
         }
 
+        if (!isGrounded)
+        {
+            fallTimer += Time.deltaTime;
+            if (fallTimer >= 1f) // 🔹 1초 이상 떨어지면
+            {
+                GameOver();
+            }
+        }
+        else
+        {
+            fallTimer = 0f; // 바닥에 닿으면 초기화
+        }
+    }
+    private void GameOver()
+    {
+        isDead = true;
+        rb.linearVelocity = Vector3.zero;
+        rb.isKinematic = true;
 
+        animator.SetTrigger("Die"); // 죽는 애니메이션 실행
+
+        if (gameOverUI != null)
+            gameOverUI.SetActive(true); // 🔹 게임오버 UI 표시
     }
 
 
