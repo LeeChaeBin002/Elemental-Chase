@@ -7,6 +7,7 @@ public class EnemyHealth : MonoBehaviour
     public int maxHp = 100;
     private int currentHp;
     private bool isDead = false;
+    public bool isBoss = false; 
 
     private EnemyMove enemyMove;
 
@@ -57,8 +58,20 @@ public class EnemyHealth : MonoBehaviour
 
         if (currentHp <= 0)
         {
-            Debug.Log("[EnemyHealth] 체력 0 → 스턴 코루틴 시작");
-            StartCoroutine(StunAndRespawn());
+            if (isBoss)
+            {
+                // 보스 → 부활 X, 보상 UI 표시
+                Debug.Log("[Boss] 처치됨! 보상 지급");
+                if (GameManager.Instance != null)
+                    GameManager.Instance.ShowRewardUI();
+
+                Destroy(gameObject); // 필요하면 제거
+            }
+            else
+            {
+                // 일반 몬스터 → 스턴 후 리스폰
+                StartCoroutine(StunAndRespawn());
+            }
         }
     }
 

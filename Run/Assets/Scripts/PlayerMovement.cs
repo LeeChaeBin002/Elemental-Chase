@@ -37,9 +37,13 @@ public class PlayerMovement : MonoBehaviour
     [Header("Effects")]
     public Material speedEffectMat;
     [Header("Jump Settings")]
-    public float jumpHeight = 5f;   // Inspector에서 높이 조절 가능
-    public float jumpDuration = 0.6f; // 점프 시간도 함께 조절 가능
+    public float normalJumpHeight = 5f;   // Inspector에서 높이 조절 가능
+    public float normalJumpDuration = 0.6f; // 점프 시간도 함께 조절 가능
+    public float obstacleJumpHeight = 7f;
+    public float obstacleJumpDuration = 0.4f;
 
+
+    public float landingOffsetZ = 0.2f; // 🔹 장애물 윗면 중앙에서 앞으로 땡겨올 비율
     private int currentLane = 1;
     private Vector3 targetPosition;
 
@@ -110,7 +114,7 @@ public class PlayerMovement : MonoBehaviour
         else
             Debug.LogError("[ERROR] SpeedFeature 못 찾음");
 
-        SetSpeedEffect(false);
+        //SetSpeedEffect(false);
 
         if (speedEffectMat != null)
             speedEffectMat.SetFloat("_Distortion", 0f);
@@ -204,7 +208,7 @@ public class PlayerMovement : MonoBehaviour
         runSpeed = baseSpeed * multiplier;
 
         // 🔹 효과용 Material 활성화
-        SetSpeedEffect(true);
+        //SetSpeedEffect(true);
 
 
         // 🔹 카메라 줌인 (FOV 30으로)
@@ -221,7 +225,7 @@ public class PlayerMovement : MonoBehaviour
         yield return new WaitForSeconds(duration);
 
         runSpeed = original;
-        SetSpeedEffect(false);  // 끄기
+        //SetSpeedEffect(false);  // 끄기
       
         Debug.Log("[버프 종료] 기본 속도로 복귀");
         // 🔹 카메라 줌아웃 (기본값으로 되돌림)
@@ -233,19 +237,19 @@ public class PlayerMovement : MonoBehaviour
         // 🔹 쉐이더 강도 내리기
         StartCoroutine(AnimateSpeedShader(0f, 0.5f));
     }
-    private void SetSpeedEffect(bool enabled)
-    {
-        Debug.Log($"[SetSpeedEffect 호출됨] enabled={enabled}, speedFeature={(speedFeature != null ? speedFeature.name : "NULL")}");
+    //private void SetSpeedEffect(bool enabled)
+    //{
+    //    Debug.Log($"[SetSpeedEffect 호출됨] enabled={enabled}, speedFeature={(speedFeature != null ? speedFeature.name : "NULL")}");
 
-        if (speedFeature == null)
-        {
-            Debug.LogWarning("[SetSpeedEffect] speedFeature 아직 연결 안됨");
-            return;
-        }
+    //    if (speedFeature == null)
+    //    {
+    //        Debug.LogWarning("[SetSpeedEffect] speedFeature 아직 연결 안됨");
+    //        return;
+    //    }
 
-        speedFeature.SetActive(enabled);
-        Debug.Log($"[RendererFeature 적용됨] {speedFeature.name} → {enabled}");
-    }
+    //    speedFeature.SetActive(enabled);
+    //    Debug.Log($"[RendererFeature 적용됨] {speedFeature.name} → {enabled}");
+    //}
 
     // 배율 → 타겟 FOV 계산 함수
     private float CalculateTargetFOV(float multiplier)
@@ -481,10 +485,10 @@ public class PlayerMovement : MonoBehaviour
             Die();
         }
 
-        if (!isGrounded)
+        if (!isGrounded && !hasJumped)
         {
             fallTimer += Time.deltaTime;
-            if (fallTimer >= 1f) // 🔹 1초 이상 떨어지면
+            if (fallTimer >= 3f) // 🔹 3초 이상 떨어지면
             {
                 GameOver();
             }
@@ -573,41 +577,92 @@ public class PlayerMovement : MonoBehaviour
         animator.SetTrigger("Jump");
 
         Vector3 start = transform.position;
-        RaycastHit hit;
+        RaycastHit hit = new RaycastHit();
         Vector3 rayOrigin = transform.position + Vector3.up * 1f;
 
-        if (Physics.Raycast(rayOrigin, Vector3.forward, out hit, 5f, LayerMask.GetMask("Obstacle")))
+        if (isBlocked || Physics.Raycast(rayOrigin, Vector3.forward, out hit, 5f, LayerMask.GetMask("Obstacle")))
         {
-            Bounds bounds = hit.collider.bounds;
-            float obstacleTopY = bounds.max.y;
-            float obstacleHeight = obstacleTopY - transform.position.y;
+            // 장애물 정보가 있으면 높이 계산
+            float dynamicHeight = obstacleJumpHeight;       // 기본 높이
+            float dynamicDuration = obstacleJumpDuration;   // 기본 시간
+            Vector3 end = start + Vector3.forward; // 기본 착지 위치 (앞으로 살짝만)
 
-            float maxJumpHeight = 6f; // 플레이어가 낼 수 있는 최대 점프치
-
-            float dynamicJumpHeight;
-
-            if (obstacleHeight <= maxJumpHeight)
+            if (hit.collider != null) // 실제 장애물 검출된 경우
             {
-                // 장애물을 넘을 수 있는 높이 → 높이에 맞춰 점프
-                dynamicJumpHeight = obstacleHeight + 1f;
-                Debug.Log($"[Jump] 장애물 높이에 맞춰 점프 → {dynamicJumpHeight}");
-            }
-            else
-            {
-                // 너무 높은 경우 → 그냥 기본 점프 높이로만
-                dynamicJumpHeight = jumpHeight;
-                Debug.Log($"[Jump] 장애물 너무 높음 → 기본 점프 ({dynamicJumpHeight})");
+                Bounds b = hit.collider.bounds;
+                float topY = b.max.y;
+
+                // 필요한 높이 계산 (최소 obstacleJumpHeight 보장)
+                float need = (topY - transform.position.y) + 0.6f;
+                dynamicHeight = Mathf.Max(obstacleJumpHeight, need);
+
+                //  착지 지점 = 장애물 "앞/뒤 모서리" 기준으로 잡기
+                float landingSide = (landingOffsetZ >= 0) ? b.max.z : b.min.z;
+
+                // offset 비율만큼 더하기 (예: -0.3f → 뒤쪽 30%)
+                float zOffset = (b.extents.z * Mathf.Abs(landingOffsetZ));
+
+                float targetZ = (landingOffsetZ >= 0)
+                    ? landingSide + zOffset   // 앞쪽 착지
+                    : landingSide - zOffset;  // 뒤쪽 착지
+
+                end = new Vector3(
+                    transform.position.x,
+                    topY + 0.05f,  // 살짝 띄워서 착지
+                    targetZ
+                );
             }
 
-            Vector3 end = new Vector3(bounds.center.x, bounds.max.y, bounds.center.z + 0.5f);
-            StartCoroutine(ParabolaJump(start, end, jumpHeight, jumpDuration));
+            Debug.Log($"[장애물/막힘 점프] 높이 {dynamicHeight}, 시간 {dynamicDuration}");
+            StartCoroutine(BezierJump(start, end, dynamicHeight, dynamicDuration));
             return;
+          
         }
 
-        // 🔹 장애물이 없는 경우 → 일반 점프
-        Vector3 normalEnd = start + Vector3.forward * 8f;
-        StartCoroutine(ParabolaJump(start, normalEnd, jumpHeight, jumpDuration));
-        Debug.Log("[일반 점프]");
+
+
+        Vector3 normalEnd = start + Vector3.forward * 10f;
+        Debug.Log($"[일반 점프] 높이 {normalJumpHeight}, 시간 {normalJumpDuration}");
+        StartCoroutine(BezierJump(start, normalEnd, normalJumpHeight, normalJumpDuration));
+    }
+    private bool isJumping = false;
+    IEnumerator BezierJump(Vector3 start, Vector3 end, float height, float duration)
+    {
+        isJumping = true;
+        // 러너 로직/중력 전부 정지
+        rb.linearVelocity = Vector3.zero;
+        rb.isKinematic = true;
+
+        float elapsed = 0f;
+
+        // 베지에 컨트롤 포인트 (포물선 모양)
+        Vector3 control = (start + end) / 2f + Vector3.up * (height * 1.5f);
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / duration);
+
+            // 🔹 Quadratic Bezier 공식: (1-t)^2 * P0 + 2(1-t)t * P1 + t^2 * P2
+            Vector3 pos =
+                Mathf.Pow(1 - t, 2) * start +
+                2 * (1 - t) * t * control +
+                Mathf.Pow(t, 2) * end;
+
+            rb.MovePosition(pos);
+            yield return null;
+        }
+            if (Physics.Raycast(end + Vector3.up * 2f, Vector3.down, out RaycastHit groundHit, 5f, LayerMask.GetMask("Obstacle", "Untagged")))
+            {
+                Vector3 groundPos = groundHit.point + Vector3.up * 0.05f;
+                rb.MovePosition(groundPos);
+            }
+
+
+            isGrounded = true;
+            hasJumped = false;
+            isJumping = false;
+            rb.isKinematic = false;
     }
     IEnumerator ParabolaJump(Vector3 start, Vector3 end, float height, float duration)
     {
@@ -638,11 +693,10 @@ public class PlayerMovement : MonoBehaviour
     }
     private void CheckGround()
     {
-        RaycastHit hit;
         Vector3 origin = transform.position + Vector3.up * 0.1f;
 
         // 🔹 아래 방향 레이캐스트
-        if (Physics.Raycast(origin, Vector3.down, out hit, 2f))
+        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, 2f))
         {
             // 바닥이나 장애물 위
             if (hit.collider.CompareTag("Untagged") || hit.collider.CompareTag("Obstacle"))
@@ -764,19 +818,14 @@ public class PlayerMovement : MonoBehaviour
         // 점프 중이면 무시
         if (hasJumped) return;
 
-        // 플레이어 발 밑으로 레이 쏘기
-        RaycastHit hit;
-        Vector3 origin = transform.position + Vector3.up * 0.5f;
-
-        if (Physics.Raycast(origin, Vector3.down, out hit, 2f, LayerMask.GetMask("Floor", "Obstacle")))
+        if (Physics.Raycast(transform.position + Vector3.up * 0.5f, Vector3.down, out RaycastHit hit, 2f, LayerMask.GetMask("Untagged", "Obstacle")))
         {
             float distance = transform.position.y - hit.point.y;
 
-            // 너무 붕 뜨면 강제로 붙여주기
             if (distance > 0.05f && distance < 1.0f)
             {
                 Vector3 pos = rb.position;
-                pos.y = hit.point.y + 0.01f;   // 살짝 띄워서 보정
+                pos.y = hit.point.y + 0.01f;
                 rb.MovePosition(pos);
                 rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z);
                 isGrounded = true;
