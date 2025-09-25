@@ -2,11 +2,13 @@
 
 public class GateSpawner : MonoBehaviour
 {
-    [Header("새로 스폰할 적 프리팹")]
-    public GameObject enemyToActivate;
 
-    //[Header("스폰 위치")]
-    //public Transform spawnPoint;
+    [Header("이전 적")]
+    public GameObject oldEnemy;
+
+
+    [Header("새로 활성화할 적")]
+    public GameObject newEnemy;
 
     private bool hasSpawned = false; // 중복 스폰 방지
     private void OnTriggerEnter(Collider other)
@@ -14,19 +16,20 @@ public class GateSpawner : MonoBehaviour
         if (hasSpawned) return;
         if (other.CompareTag("Player"))
         {
-            // 🔹 현재 씬에 있는 첫 번째 EnemyMove 찾기
-            EnemyMove oldEnemy = FindObjectOfType<EnemyMove>();
-            if (oldEnemy != null)
+            // 1️⃣ 이전 적 비활성화
+            if (oldEnemy != null && oldEnemy.activeSelf)
             {
-                Destroy(oldEnemy.gameObject); // 기존 적 삭제
+                oldEnemy.SetActive(false);
             }
 
-            if (enemyToActivate != null)
+            // 2️⃣ 다음 적 활성화
+            if (newEnemy != null && !newEnemy.activeSelf)
             {
-                enemyToActivate.SetActive(true);
-                Debug.Log($"{gameObject.name} 게이트 통과 → 새로운 적 활성화!");
+                newEnemy.SetActive(true);
+                Debug.Log($"{gameObject.name} 게이트 통과 → {newEnemy.name} 활성화!");
             }
-            hasSpawned = true;
+
+            hasSpawned = true; // 중복 방지
         }
     }
 }
