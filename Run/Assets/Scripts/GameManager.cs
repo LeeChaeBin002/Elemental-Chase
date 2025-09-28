@@ -46,7 +46,11 @@ public class GameManager : MonoBehaviour
         rewardUI.gameObject.SetActive(true);   // 켜둔 뒤
         rewardUI.rewardParent.SetActive(false); // 내부 패널만 꺼두기
         MoveToStage(currentStage);
+        // 처음에는 UI 전체를 꺼둠
+        if (rewardUI != null)
+            rewardUI.gameObject.SetActive(false);
 
+        MoveToStage(currentStage);
         // 🔹 1구간 시작 시 BGM 자동 실행
         if (currentStage == 1 && StageBGMManager.Instance != null && stage1BGM != null)
         {
@@ -116,6 +120,11 @@ public class GameManager : MonoBehaviour
         {
             player.RespawnAt(respawn.transform);
         }
+        // ✅ 보상 UI는 리셋 시 꺼두기
+        if (rewardUI != null)
+            rewardUI.gameObject.SetActive(false);
+
+        Time.timeScale = 1f; // 혹시라도 멈춰있을 경우 대비
     }
     public void ShowRewardUI()
     {
@@ -138,8 +147,12 @@ public class GameManager : MonoBehaviour
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
     }
-    
 
+    public void GoToMainMenu()
+    {
+        Time.timeScale = 1f; // 혹시 멈춰있으면 원복
+        SceneManager.LoadScene("Title"); // 메인 메뉴 씬으로 전환
+    }
     void PickRandomCandidates(int count)
     {
     

@@ -13,7 +13,7 @@ public class RewardUI : MonoBehaviour
 
     [Header("Buttons")]
     public Button restartButton;
-    public Button exitButton;
+    public Button[] exitButtons;
 
     private DataManager dataManager;
 
@@ -23,6 +23,12 @@ public class RewardUI : MonoBehaviour
     [Header("Audio")]
     public AudioSource audioSource;    // 🔹 AudioSource 컴포넌트
     public AudioClip WinSound;        // 🔹 사운드 클립
+    [Header("Stars")]
+    public GameObject[] starOnObjs;   // 채워진 별 오브젝트 3개
+    public GameObject[] starOffObjs;  // 빈 별 오브젝트 3개
+
+    [Header("Reward UI Texts")]
+    public TextMeshProUGUI coinText;
 
     void Start()
     {
@@ -31,18 +37,58 @@ public class RewardUI : MonoBehaviour
 
         if (restartButton != null)
             restartButton.onClick.AddListener(OnClickRestart);
-        if (exitButton != null)
-            exitButton.onClick.AddListener(OnClickExit);
+        if (exitButtons != null)
+        {
+            for (int i = 0; i < exitButtons.Length; i++)
+            {
+                int index = i; // 🔹 클로저 문제 방지
+                exitButtons[i].onClick.AddListener(() => OnClickExit(index));
+            }
+        }
 
+    }
+    public void OnClickExit(int buttonIndex)
+    {
+        switch (buttonIndex)
+        {
+            case 0:
+                Debug.Log("Exit 버튼 1 → 메인 메뉴로 이동");
+                Time.timeScale = 1f;  // 씬 이동 전에 복원
+                SceneManager.LoadScene("Title");
+                break;
+
+            case 1:
+                Debug.Log("Exit 버튼 2 → 다음 스테이지로 이동");
+                Time.timeScale = 1f;  // 씬 이동 전에 복원
+                SceneManager.LoadScene("Title");
+                break;
+
+            case 2:
+                Debug.Log("Exit 버튼 3 → 게임 종료");
+                Time.timeScale = 1f;  // 씬 이동 전에 복원
+                SceneManager.LoadScene("Title");
+                break;
+        }
     }
     public void OnClickRestart()
     {
-        if (GameManager.Instance != null)
+        // UI 먼저 꺼주기
+        if (rewardParent != null)
+            rewardParent.SetActive(false);
+        // 씬 리로드
+        Scene currentScene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(currentScene.name);
+    }
+    private void UpdateStars(int starCount)
+    {
+        for (int i = 0; i < starOnObjs.Length; i++)
         {
-            GameManager.Instance.Retry();
+            // i < starCount → 채워진 별 활성화
+            starOnObjs[i].SetActive(i < starCount);
+            // 나머지는 빈 별 보여주기
+            starOffObjs[i].SetActive(i >= starCount);
         }
     }
-    
     public void ShowReward()
     {
         if (rewardParent != null)
@@ -65,62 +111,37 @@ public class RewardUI : MonoBehaviour
         if (rewardParent != null)
         {
             var img = rewardParent.GetComponent<UnityEngine.UI.Image>();
-            if (img != null)
-                img.color = new Color(1, 1, 1, 1);
-        }
+         }
 
         int collectedCoins = ScoreManager.instance != null ? ScoreManager.instance.coinCount : 0;
         Debug.Log($"[RewardUI] 현재 코인 개수: {collectedCoins}");
+        if (coinText != null)
+            coinText.text = collectedCoins.ToString();
 
-        // 🔹 StringBuilder는 여기서 선언
-        StringBuilder sb = new StringBuilder();
-        sb.AppendLine("클리어 보상");
-        sb.AppendLine($"획득한 코인: {collectedCoins}");
-        sb.AppendLine();
+        // 🔹 별 개수 결정 (예시: 코인 개수 기준)
+        int starCount = 0;
+        if (collectedCoins >= 150) starCount = 3;  // 대박 보상
+        else if (collectedCoins >= 100) starCount = 2;  // 중간 보상
+        else if (collectedCoins >= 50) starCount = 1;  // 작은 보상
+        else starCount = 0;  // 실패
 
-        // 🔹 보상 체크
-        RewardData bestReward = null;
+        // 별 UI 업데이트
+        UpdateStars(starCount);
 
-        foreach (var r in dataManager.rewards)
+
+        // 🔹 리워드 텍스트를 간결하게 변경
+        string rewardMsg = "";
+        switch (starCount)
         {
-            Debug.Log($"[RewardUI] 보상 후보: {r.Name}, 조건타입={r.ConditionType}, Threshold={r.Threshold}, Amount={r.Amount}");
-
-            if (r.ConditionType == 1 && collectedCoins >= r.Threshold)
-            {
-                if (bestReward == null || r.Threshold > bestReward.Threshold)
-                {
-                    bestReward = r;
-                }
-            }
+            case 1: rewardMsg = "작은 보상!"; break;
+            case 2: rewardMsg = "중간 보상!"; break;
+            case 3: rewardMsg = "대박 보상!"; break;
+            default: rewardMsg = "보상 없음.."; break;
         }
 
-        if (bestReward != null)
-        {
-            sb.AppendLine($"▶ {bestReward.Name} 달성!");
-            sb.AppendLine($"   재화 +{bestReward.Amount}");
-            sb.AppendLine();
-        }
-        else
-        {
-            Debug.Log("[RewardUI] 조건을 만족하는 보상이 없음!");
-        }
-
-        // 🔹 클리어 보상 타입 2 처리
-        foreach (var r in dataManager.rewards)
-        {
-            if (r.ConditionType == 2)
-            {
-                sb.AppendLine($"▶ {r.Name} 달성!");
-                sb.AppendLine($"   재화 +{r.Amount}");
-                sb.AppendLine();
-            }
-        }
-
-        // 🔹 최종 UI 적용
-        rewardText.text = sb.ToString();
-        Debug.Log("[RewardUI] 최종 출력 텍스트:\n" + sb.ToString());
+        rewardText.text = rewardMsg;
     }
-    
+
 
     // 🔹 종료 버튼
     public void OnClickExit()
