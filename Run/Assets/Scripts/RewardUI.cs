@@ -20,6 +20,10 @@ public class RewardUI : MonoBehaviour
     [Header("Countdown UI")]
     public TextMeshProUGUI countdownText;
 
+    [Header("Audio")]
+    public AudioSource audioSource;    // 🔹 AudioSource 컴포넌트
+    public AudioClip WinSound;        // 🔹 사운드 클립
+
     void Start()
     {
         gameObject.SetActive(false);
@@ -51,7 +55,12 @@ public class RewardUI : MonoBehaviour
 
         Debug.Log("[RewardUI] ShowReward 호출됨");
         gameObject.SetActive(true);
-
+        // 🔹 이겼을 때 사운드 재생
+        if (audioSource != null && WinSound != null)
+        {
+            audioSource.PlayOneShot(WinSound);
+           
+        }
         // 🔹 UI 배경 활성화
         if (rewardParent != null)
         {

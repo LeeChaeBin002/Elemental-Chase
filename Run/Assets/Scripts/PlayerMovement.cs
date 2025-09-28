@@ -14,7 +14,7 @@ public class PlayerMovement : MonoBehaviour
     public float jumpForce = 5f;
     public float laneChangeSpeed = 10f;//레인 이동속도
     private float fallTimer = 0f;//낙하 추적
-
+    private PlayerJump playerJump;
     private bool isStunned = false;
 
     public GameObject blindOverlay;
@@ -22,7 +22,7 @@ public class PlayerMovement : MonoBehaviour
     public VirtualJoystick joystick; // 조이스틱 연결용
     public Button jumpButton;
 
-    public float fallMultiplier = 30f; // 낙하 가속 배율
+    public float fallMultiplier = 10f; // 낙하 가속 배율
 
     //private float keyHoldTime = 0f;
     private UnityEngine.Rigidbody rb;
@@ -36,11 +36,14 @@ public class PlayerMovement : MonoBehaviour
 
     [Header("Effects")]
     public Material speedEffectMat;
-    [Header("Jump Settings")]
-    public float normalJumpHeight = 5f;   // Inspector에서 높이 조절 가능
-    public float normalJumpDuration = 0.6f; // 점프 시간도 함께 조절 가능
-    public float obstacleJumpHeight = 7f;
-    public float obstacleJumpDuration = 0.4f;
+    //[Header("Jump Settings")]
+    //public float normalJumpHeight = 5f;   // Inspector에서 높이 조절 가능
+    //public float normalJumpDuration = 0.6f; // 점프 시간도 함께 조절 가능
+    //public float obstacleJumpHeight = 7f;
+    //public float obstacleJumpDuration = 0.4f;
+
+
+   
 
 
     public float landingOffsetZ = 0.2f; // 🔹 장애물 윗면 중앙에서 앞으로 땡겨올 비율
@@ -49,7 +52,7 @@ public class PlayerMovement : MonoBehaviour
 
     private bool isGrounded = true;
     private bool hasJumped = false;
-    private bool isBlocked = false;
+    public bool isBlocked = false;
 
 
     public float fallSpeed = 10f; // 낙하 속도
@@ -66,8 +69,13 @@ public class PlayerMovement : MonoBehaviour
     private GameObject activeEffect;
     public GameObject stunEffectPrefab;   // 🔹 Inspector에서 연결할 스턴 이펙트 프리팹
     private GameObject activeStunEffect;  // 현재 실행 중인 이펙트
-
     public Vector3 stunOffset = new Vector3(0, 0.3f, 0); // Inspector에서 조절 가능
+    [Header("Audio - Skill Sounds")]
+    public AudioSource audioSource;        // 공용 오디오 소스
+    public AudioClip waterSkillSound;      // 물 원소 스킬 사운드
+    public AudioClip fireSkillSound;       // 불 원소 스킬 사운드
+    public AudioClip airSkillSound;        // 공기 원소 스킬 사운드
+    public AudioClip earthSkillSound;      // 흙 원소 스킬 사운드
 
     [Header("Camera")]
     public CinemachineCamera cineCam;   // 🔹 인스펙터에서 CinemachineCamera 드래그
@@ -95,24 +103,11 @@ public class PlayerMovement : MonoBehaviour
         rb.freezeRotation = true;
         animator.SetInteger("animation", 18);
         UpdateTargetPosition();
-        jumpButton.onClick.AddListener(Jump);
-
-        if (isDead)
+        playerJump = GetComponent<PlayerJump>(); // 점프 스크립트 가져오기
+        jumpButton.onClick.AddListener(() =>
         {
-            RespawnInstant();
-        }
-
-        // RendererFeature 찾기
-        foreach (var f in rendererData.rendererFeatures)
-            Debug.Log($"RendererFeature: {f.name}");
-
-        speedFeature = rendererData.rendererFeatures
-            .Find(f => f.name.Contains("FullScreenPassRendererFeature"));
-
-        if (speedFeature != null)
-            Debug.Log("[OK] SpeedFeature 연결 성공!");
-        else
-            Debug.LogError("[ERROR] SpeedFeature 못 찾음");
+            playerJump.Jump(isBlocked); // isBlocked 전달 안함
+        });
 
         //SetSpeedEffect(false);
 
@@ -146,18 +141,43 @@ public class PlayerMovement : MonoBehaviour
         // 쿨타임 적용
         StartCoroutine(SkillCooldownRoutine());
     }
-    private void ApplySkillEffect(SkillData skill)
+    private void PlaySkillSound(int elementId)
     {
+        if (audioSource == null) return;
+
+        switch (elementId)
+        {
+            case 1: // 물
+                if (waterSkillSound != null) audioSource.PlayOneShot(waterSkillSound);
+                break;
+            case 2: // 불
+                if (fireSkillSound != null) audioSource.PlayOneShot(fireSkillSound);
+                break;
+            case 3: // 공기
+                if (airSkillSound != null) audioSource.PlayOneShot(airSkillSound);
+                break;
+            case 4: // 흙
+                if (earthSkillSound != null) audioSource.PlayOneShot(earthSkillSound);
+                break;
+            default:
+                Debug.LogWarning("[SkillSound] 정의되지 않은 원소 ID: " + elementId);
+                break;
+        }
+    }
+    private void ApplySkillEffect(SkillData skill)
+    {// 🔹 스킬 발동 사운드
+        PlaySkillSound(skill.ElementId);
+
         // 자기 자신 버프형
         if (skill.TargetType == 1)
         {
             // BuffId1 적용 → 이속 증가
             if (skill.BuffId1 == 321040) // 물 Lv1
-                StartCoroutine(ApplySpeedBuff(1.4f, skill.Duration));
-            else if (skill.BuffId1 == 321060) // 물 Lv2
                 StartCoroutine(ApplySpeedBuff(1.6f, skill.Duration));
-            else if (skill.BuffId1 == 321080) // 물 Lv3
+            else if (skill.BuffId1 == 321060) // 물 Lv2
                 StartCoroutine(ApplySpeedBuff(1.8f, skill.Duration));
+            else if (skill.BuffId1 == 321080) // 물 Lv3
+                StartCoroutine(ApplySpeedBuff(2.0f, skill.Duration));
             else if (skill.BuffId1 == 312100) // 장애물 무시
                 StartCoroutine(ApplyInvincibility(skill.Duration));
 
@@ -165,14 +185,14 @@ public class PlayerMovement : MonoBehaviour
             else if (skill.ElementId == 3)
             {
                 if (skill.BuffId1 == 311040) // 공기 Lv1
-                    StartCoroutine(ApplySpeedBuff(1.4f, skill.Duration));
-                else if (skill.BuffId1 == 311060) // 공기 Lv2
                     StartCoroutine(ApplySpeedBuff(1.6f, skill.Duration));
-                else if (skill.BuffId1 == 311080 && skill.BuffId2 == 0) // 공기 Lv3
+                else if (skill.BuffId1 == 311060) // 공기 Lv2
                     StartCoroutine(ApplySpeedBuff(1.8f, skill.Duration));
+                else if (skill.BuffId1 == 311080 && skill.BuffId2 == 0) // 공기 Lv3
+                    StartCoroutine(ApplySpeedBuff(2.0f, skill.Duration));
                 else if (skill.BuffId1 == 311080 && skill.BuffId2 == 312100) // 공기 Lv4
                 {
-                    StartCoroutine(ApplySpeedBuff(1.8f, skill.Duration));
+                    StartCoroutine(ApplySpeedBuff(2.0f, skill.Duration));
                     StartCoroutine(ApplyInvincibility(skill.Duration));
                 }
             }
@@ -219,7 +239,7 @@ public class PlayerMovement : MonoBehaviour
             fovCoroutine = StartCoroutine(ChangeFOV(30f, 0.5f)); // 0.5초 동안 줌인
         }
         // 🔹 쉐이더 강도 올리기
-        StartCoroutine(AnimateSpeedShader(0.4f, 0.5f));
+        //StartCoroutine(AnimateSpeedShader(0.4f, 0.5f));
         Debug.Log($"[버프] 이속 {multiplier * 100}% ({duration}초)");
         
         yield return new WaitForSeconds(duration);
@@ -235,7 +255,7 @@ public class PlayerMovement : MonoBehaviour
             fovCoroutine = StartCoroutine(ChangeFOV(defaultFOV, 0.5f)); // 0.5초 동안 복구
         }
         // 🔹 쉐이더 강도 내리기
-        StartCoroutine(AnimateSpeedShader(0f, 0.5f));
+        //StartCoroutine(AnimateSpeedShader(0f, 0.5f));
     }
     //private void SetSpeedEffect(bool enabled)
     //{
@@ -508,6 +528,12 @@ public class PlayerMovement : MonoBehaviour
 
         if (gameOverUI != null)
             gameOverUI.SetActive(true); // 🔹 게임오버 UI 표시
+
+        // 🔹 GameManager에게도 알림 (BGM 실행 포함)
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.ShowLoseUI();
+        }
     }
 
 
@@ -567,130 +593,8 @@ public class PlayerMovement : MonoBehaviour
 
 
 
-    void Jump()
-    {
-
-        if (isDead || isStunned || hasJumped) return;
-
-        hasJumped = true;
-        isGrounded = false;
-        animator.SetTrigger("Jump");
-
-        Vector3 start = transform.position;
-        RaycastHit hit = new RaycastHit();
-        Vector3 rayOrigin = transform.position + Vector3.up * 1f;
-
-        if (isBlocked || Physics.Raycast(rayOrigin, Vector3.forward, out hit, 5f, LayerMask.GetMask("Obstacle")))
-        {
-            // 장애물 정보가 있으면 높이 계산
-            float dynamicHeight = obstacleJumpHeight;       // 기본 높이
-            float dynamicDuration = obstacleJumpDuration;   // 기본 시간
-            Vector3 end = start + Vector3.forward; // 기본 착지 위치 (앞으로 살짝만)
-
-            if (hit.collider != null) // 실제 장애물 검출된 경우
-            {
-                Bounds b = hit.collider.bounds;
-                float topY = b.max.y;
-
-                // 필요한 높이 계산 (최소 obstacleJumpHeight 보장)
-                float need = (topY - transform.position.y) + 0.6f;
-                dynamicHeight = Mathf.Max(obstacleJumpHeight, need);
-
-                //  착지 지점 = 장애물 "앞/뒤 모서리" 기준으로 잡기
-                float landingSide = (landingOffsetZ >= 0) ? b.max.z : b.min.z;
-
-                // offset 비율만큼 더하기 (예: -0.3f → 뒤쪽 30%)
-                float zOffset = (b.extents.z * Mathf.Abs(landingOffsetZ));
-
-                float targetZ = (landingOffsetZ >= 0)
-                    ? landingSide + zOffset   // 앞쪽 착지
-                    : landingSide - zOffset;  // 뒤쪽 착지
-
-                end = new Vector3(
-                    transform.position.x,
-                    topY + 0.05f,  // 살짝 띄워서 착지
-                    targetZ
-                );
-            }
-
-            Debug.Log($"[장애물/막힘 점프] 높이 {dynamicHeight}, 시간 {dynamicDuration}");
-            StartCoroutine(BezierJump(start, end, dynamicHeight, dynamicDuration));
-            return;
-          
-        }
-
-
-
-        Vector3 normalEnd = start + Vector3.forward * 10f;
-        Debug.Log($"[일반 점프] 높이 {normalJumpHeight}, 시간 {normalJumpDuration}");
-        StartCoroutine(BezierJump(start, normalEnd, normalJumpHeight, normalJumpDuration));
-    }
-    private bool isJumping = false;
-    IEnumerator BezierJump(Vector3 start, Vector3 end, float height, float duration)
-    {
-        isJumping = true;
-        // 러너 로직/중력 전부 정지
-        rb.linearVelocity = Vector3.zero;
-        rb.isKinematic = true;
-
-        float elapsed = 0f;
-
-        // 베지에 컨트롤 포인트 (포물선 모양)
-        Vector3 control = (start + end) / 2f + Vector3.up * (height * 1.5f);
-
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / duration);
-
-            // 🔹 Quadratic Bezier 공식: (1-t)^2 * P0 + 2(1-t)t * P1 + t^2 * P2
-            Vector3 pos =
-                Mathf.Pow(1 - t, 2) * start +
-                2 * (1 - t) * t * control +
-                Mathf.Pow(t, 2) * end;
-
-            rb.MovePosition(pos);
-            yield return null;
-        }
-            if (Physics.Raycast(end + Vector3.up * 2f, Vector3.down, out RaycastHit groundHit, 5f, LayerMask.GetMask("Obstacle", "Untagged")))
-            {
-                Vector3 groundPos = groundHit.point + Vector3.up * 0.05f;
-                rb.MovePosition(groundPos);
-            }
-
-
-            isGrounded = true;
-            hasJumped = false;
-            isJumping = false;
-            rb.isKinematic = false;
-    }
-    IEnumerator ParabolaJump(Vector3 start, Vector3 end, float height, float duration)
-    {
-        rb.isKinematic = true; // 물리 끄기
-        yield return new WaitForFixedUpdate();
-        rb.isKinematic = false;
-
-        float elapsed = 0f;
-
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            float t = elapsed / duration;
-            // 🔹 XZ는 그대로 선형 보간
-            Vector3 pos = Vector3.Lerp(start, end, t);
-
-            // 🔹 Y는 (start.y ~ end.y) 선형 보간 + 포물선 높이
-            float baseY = Mathf.Lerp(start.y, end.y, t);
-            float parabola = 4 * height * t * (1 - t); // 최대 height까지 뜸
-            pos.y = baseY + parabola;
-
-            rb.MovePosition(pos);
-            yield return null;
-        }
-
-        isGrounded = true;
-        hasJumped = false;
-    }
+    
+   
     private void CheckGround()
     {
         Vector3 origin = transform.position + Vector3.up * 0.1f;
@@ -950,21 +854,6 @@ public class PlayerMovement : MonoBehaviour
             return; // 무적 상태라면 충돌 무시
 
     }
-    private IEnumerator AnimateSpeedShader(float targetValue, float duration)
-    {
-        if (speedEffectMat == null) yield break;
-        float startValue = speedEffectMat.GetFloat("Distortion");
-        float time = 0f;
+    
 
-        while (time < duration)
-        {
-            time += Time.deltaTime;
-            float newValue = Mathf.Lerp(startValue, targetValue, time / duration);
-            speedEffectMat.SetFloat("Distortion", newValue);
-
-            Debug.Log($"[Shader Distortion] {newValue}"); // 👈 값 변화 확인
-            yield return null;
-        }
-        speedEffectMat.SetFloat("Distortion", targetValue);
-    }
 }

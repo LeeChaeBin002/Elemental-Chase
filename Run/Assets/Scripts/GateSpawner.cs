@@ -10,7 +10,15 @@ public class GateSpawner : MonoBehaviour
     [Header("새로 활성화할 적")]
     public GameObject newEnemy;
 
+    [Header("구간 설정")]
+    public int stageIndex;         // 이 게이트가 담당하는 구간 번호 (1, 2, 3…)
+
+    [Header("구간 전용 BGM")]
+
+    public AudioClip stageBGM;            // 이 구간 전용 BGM
+
     private bool hasSpawned = false; // 중복 스폰 방지
+
     private void OnTriggerEnter(Collider other)
     {
         if (hasSpawned) return;
@@ -27,6 +35,23 @@ public class GateSpawner : MonoBehaviour
             {
                 newEnemy.SetActive(true);
                 Debug.Log($"{gameObject.name} 게이트 통과 → {newEnemy.name} 활성화!");
+                // 3️⃣ BGM 처리
+                if (StageBGMManager.Instance != null)
+                {
+                    if (stageIndex <= 2)
+                    {
+                        // 1,2구간은 같은 음악 공유 → 이미 같은 클립이면 다시 안 틀기
+                        if (StageBGMManager.Instance.bgmSource.clip != stageBGM)
+                        {
+                            StageBGMManager.Instance.PlayStageBGM(stageBGM);
+                        }
+                    }
+                    else
+                    {
+                        // 3구간은 보스 BGM으로 페이드 전환
+                        StageBGMManager.Instance.PlayStageBGMWithFade(StageBGMManager.Instance.bossBGM);
+                    }
+                }
             }
 
             hasSpawned = true; // 중복 방지

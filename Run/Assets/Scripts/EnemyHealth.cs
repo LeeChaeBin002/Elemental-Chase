@@ -20,11 +20,12 @@ public class EnemyHealth : MonoBehaviour
     private GameObject activeStunEffect;  // 현재 실행 중인 이펙트
     [Tooltip("HP바 기준 스턴 이펙트 오프셋 (위쪽)")]
     public Vector3 stunOffset = new Vector3(0, 0.3f, 0); // Inspector에서 조절 가능
+   
     void Start()
     {
         currentHp = maxHp;
         enemyMove = GetComponent<EnemyMove>();
-
+        
         // 초기화 (둘 다 있으면 같이)
         if (hpBar != null)
         {
@@ -155,7 +156,9 @@ public class EnemyHealth : MonoBehaviour
         // 3초 뒤 자동 제거
         Destroy(activeStunEffect, 3f);
     }
-
+    void OnDisable()
+    {
+    }
     private void StopStunEffect()
     {
         if (activeStunEffect != null)

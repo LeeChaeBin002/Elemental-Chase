@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
+    
 
     [Header("UI")]
     public RewardUI rewardUI;
@@ -20,7 +21,12 @@ public class GameManager : MonoBehaviour
     public Transform[] enemySpawnPoints;  // 구간별 적 위치
     private PlayerMovement player;
     private EnemyMove enemy;
+    [Header("BGM")]
+    public AudioClip stage1BGM;   // 🔹 1구간 전용 BGM
 
+    [Header("Audio")]
+    public AudioSource audioSource;     // 🔹 AudioSource (씬에 붙인 컴포넌트)
+    public AudioClip gameOverSound;     // 🔹 게임 오버 사운드 (wav, mp3 등)
     public List<CharacterData> characters => elementDataLoader.characters;
     void Awake()
     {
@@ -40,6 +46,13 @@ public class GameManager : MonoBehaviour
         rewardUI.gameObject.SetActive(true);   // 켜둔 뒤
         rewardUI.rewardParent.SetActive(false); // 내부 패널만 꺼두기
         MoveToStage(currentStage);
+
+        // 🔹 1구간 시작 시 BGM 자동 실행
+        if (currentStage == 1 && StageBGMManager.Instance != null && stage1BGM != null)
+        {
+            StageBGMManager.Instance.PlayStageBGM(stage1BGM);
+            Debug.Log("[GameManager] 1구간 BGM 시작");
+        }
     }
     public void MoveToStage(int stage)
     {
@@ -72,6 +85,15 @@ public class GameManager : MonoBehaviour
     {
         if (loseUI != null)
             loseUI.SetActive(true);
+        // 🔹 게임 오버 시 BGM도 멈춤
+        if (StageBGMManager.Instance != null)
+            StageBGMManager.Instance.StopBGMWithFade();
+
+        if (audioSource != null && gameOverSound != null)
+        {
+            audioSource.PlayOneShot(gameOverSound);
+            Debug.Log("[GameManager] 게임 오버 사운드 재생");
+        }
         Time.timeScale = 0f; // 게임 정지
     }
 
@@ -116,7 +138,7 @@ public class GameManager : MonoBehaviour
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
     }
-   
+    
 
     void PickRandomCandidates(int count)
     {

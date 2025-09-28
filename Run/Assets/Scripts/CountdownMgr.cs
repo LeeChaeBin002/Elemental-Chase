@@ -54,12 +54,12 @@ public class CountdownMgr : MonoBehaviour
         while (count > 0)
         {
             countdownText.text = count.ToString();
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSecondsRealtime(1f);
             count--;
         }
 
         countdownText.text = "Start!";
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSecondsRealtime(1f);
 
         countdownText.gameObject.SetActive(false);
 
