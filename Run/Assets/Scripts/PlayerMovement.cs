@@ -33,6 +33,7 @@ public class PlayerMovement : MonoBehaviour
     private bool canUseSkill = true; // 쿨타임 체크
     public float skillCooldown = 5f; // 기본 쿨타임 (초)
     public GameObject gameOverUI;
+    public ElementIconUI skillIconUI;
 
     [Header("Effects")]
     public Material speedEffectMat;
@@ -120,6 +121,8 @@ public class PlayerMovement : MonoBehaviour
     {
         currentSkill = skill;
         Debug.Log($"[플레이어] 스킬 세팅 완료 → {skill.Name}");
+        if (skillIconUI != null && skill != null)
+            skillIconUI.SetElementIcon(skill.ElementId);
     }
     // 본체 클릭 시 스킬 발동
     private void OnMouseDown()
@@ -343,33 +346,25 @@ public class PlayerMovement : MonoBehaviour
     private IEnumerator SkillCooldownRoutine()
     {
         canUseSkill = false;
-
         // 슬라이더 초기화
-        if (skillCooldownSlider != null)
+        if (skillCooldownSlider)
         {
             skillCooldownSlider.maxValue = skillCooldown;
             skillCooldownSlider.value = 0f;
         }
+        // UI 쿨타임 시작
+        skillIconUI?.BeginCooldown(skillCooldown);
+
         float time = 0f;
-
-
         while (time < skillCooldown)
         {
             time += Time.deltaTime;
-
-            if (skillCooldownSlider != null)
-            {
-                //차오름
-                skillCooldownSlider.value = time;
-            }
-
+            if (skillCooldownSlider) skillCooldownSlider.value = time;
             yield return null;
         }
 
-        if (skillCooldownSlider != null)
-            skillCooldownSlider.value = skillCooldown;
+        if (skillCooldownSlider) skillCooldownSlider.value = skillCooldown;
         canUseSkill = true;
-        Debug.Log("[쿨타임 종료] 스킬 재사용 가능");
     }
 
     public void ApplySlow(float multiplier)
