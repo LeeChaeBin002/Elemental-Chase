@@ -133,7 +133,15 @@ public class PlayerMovement : MonoBehaviour
             Debug.Log("스킬 사용 불가 (쿨타임 중이거나 스킬 없음)");
             return;
         }
-
+        // null-safe 접근
+        string skillName = currentSkill?.Name ?? "??";
+        string skillDesc = currentSkill?.Description ?? "??";
+        if (rb.isKinematic)
+        {
+            rb.isKinematic = false;
+            rb.linearVelocity = Vector3.forward * runSpeed; // 앞으로 밀어주기
+        }
+        isBlocked = false;
         Debug.Log($"[스킬 발동] {currentSkill.Name} - {currentSkill.Description}");
 
         // 스킬 효과 자동 실행
@@ -671,13 +679,13 @@ public class PlayerMovement : MonoBehaviour
         // 앞으로 전진
         Vector3 vel = rb.linearVelocity;
 
-        if (isBlocked)
+        if (isBlocked && !isDead && !isStunned)
         {
             vel.z = 0f; // 막혔으면 앞으로 안 나가게 고정
         }
         else
         {
-            vel.z = runSpeed; // 평소엔 앞으로 진행
+            vel.z = runSpeed > 0 ? runSpeed : baseSpeed; // 최소한 baseSpeed로 보정
         }
         vel.x = 0;          // 좌우는 레인 이동으로 제어
         rb.linearVelocity = vel; // y는 그대로 유지 (점프 값 살림)
