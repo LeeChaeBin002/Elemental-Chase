@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
-using UnityEngine.SceneManagement;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -128,17 +129,29 @@ public class GameManager : MonoBehaviour
     }
     public void ShowRewardUI()
     {
-        Time.timeScale = 0f; // 게임 멈춤
+        StartCoroutine(ShowRewardUICoroutine());
+      
+    }
+    private IEnumerator ShowRewardUICoroutine()
+    {
+        if (StageBGMManager.Instance != null)
+            StageBGMManager.Instance.StopBGMWithFade();
+
+      
+
         if (rewardUI != null)
         {
-            rewardUI.gameObject.SetActive(true);  // 🔹 반드시 켜주기
+            rewardUI.gameObject.SetActive(true);
             rewardUI.ShowReward();
-            Debug.Log("[GameManager] 보상 UI 실행됨");
+           
         }
-        else
-        {
-            Debug.LogWarning("[GameManager] rewardUI가 Inspector에 연결되지 않음!");
-        }
+        // 사운드 먼저 재생
+        if (rewardUI.audioSource != null && rewardUI.WinSound != null)
+            rewardUI.audioSource.PlayOneShot(rewardUI.WinSound);
+        // 0.3초 정도 기다린 후 게임 멈춤 (Realtime으로)
+        yield return new WaitForSecondsRealtime(0.3f);
+        Time.timeScale = 0f;
+
     }
     public void QuitGame()
     {

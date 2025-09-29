@@ -75,6 +75,8 @@ public class RewardUI : MonoBehaviour
         // UI 먼저 꺼주기
         if (rewardParent != null)
             rewardParent.SetActive(false);
+
+        Time.timeScale = 1f;
         // 씬 리로드
         Scene currentScene = SceneManager.GetActiveScene();
         SceneManager.LoadScene(currentScene.name);
@@ -94,18 +96,17 @@ public class RewardUI : MonoBehaviour
         if (rewardParent != null)
             rewardParent.SetActive(true);  // 패널 켜주기
         if (dataManager == null)
-        {
-            Debug.LogWarning("[RewardUI] DataManager가 연결되지 않았습니다!");
-            return;
-        }
-
+            dataManager = DataManager.Instance;
         Debug.Log("[RewardUI] ShowReward 호출됨");
         gameObject.SetActive(true);
-        // 🔹 이겼을 때 사운드 재생
+
+
+
+        // 🔊 사운드 먼저 재생
         if (audioSource != null && WinSound != null)
         {
             audioSource.PlayOneShot(WinSound);
-           
+            StartCoroutine(FreezeTimeAfterDelay(0.3f)); // 0.3초 후 게임 정지
         }
         // 🔹 UI 배경 활성화
         if (rewardParent != null)
@@ -120,9 +121,9 @@ public class RewardUI : MonoBehaviour
 
         // 🔹 별 개수 결정 (예시: 코인 개수 기준)
         int starCount = 0;
-        if (collectedCoins >= 150) starCount = 3;  // 대박 보상
-        else if (collectedCoins >= 100) starCount = 2;  // 중간 보상
-        else if (collectedCoins >= 50) starCount = 1;  // 작은 보상
+        if (collectedCoins >= 190) starCount = 3;  // 대박 보상
+        else if (collectedCoins >= 130) starCount = 2;  // 중간 보상
+        else if (collectedCoins >= 70) starCount = 1;  // 작은 보상
         else starCount = 0;  // 실패
 
         // 별 UI 업데이트
@@ -141,7 +142,11 @@ public class RewardUI : MonoBehaviour
 
         rewardText.text = rewardMsg;
     }
-
+    private IEnumerator FreezeTimeAfterDelay(float delay)
+    {
+        yield return new WaitForSecondsRealtime(delay);
+        Time.timeScale = 0f; // 사운드 끊기지 않게 잠시 뒤에 멈춤
+    }
 
     // 🔹 종료 버튼
     public void OnClickExit()
