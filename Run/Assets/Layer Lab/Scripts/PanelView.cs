@@ -8,20 +8,16 @@ namespace LayerLab.CasualGame
 
         public void OnEnable()
         {
-            for (int i = 0; i < otherPanels.Length; i++)
+            if (otherPanels == null) return;   // ✅ 추가
+            foreach (var p in otherPanels)
             {
-                if (otherPanels[i] != null)
-                    otherPanels[i].SetActive(true);
+                if (p != null) p.SetActive(false);
             }
         }
 
         public void OnDisable()
         {
-            for (int i = 0; i < otherPanels.Length; i++)
-            {
-                if (otherPanels[i] != null)
-                    otherPanels[i].SetActive(false);
-            }
+            for (int i = 0; i < otherPanels.Length; i++) otherPanels[i].SetActive(false);
         }
     }
 }
