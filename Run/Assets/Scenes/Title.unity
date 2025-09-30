@@ -543,8 +543,8 @@ MonoBehaviour:
   m_text: "\uD654\uBA74\uC744 \uC544\uBB34\uACF3\uC774\uB098 \uD074\uB9AD\uD574\uC11C
     \uC2DC\uC791!"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 7352de6abe2b5354f97bc9b37f2c54dc, type: 2}
-  m_sharedMaterial: {fileID: 234181779641910778, guid: 7352de6abe2b5354f97bc9b37f2c54dc, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 55587d9cbc27ad145afb6ba6adf5dd83, type: 2}
+  m_sharedMaterial: {fileID: 2512063988325654843, guid: 55587d9cbc27ad145afb6ba6adf5dd83, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -574,7 +574,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 1
+  m_fontStyle: 0
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -753,7 +753,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77f2a710d133a974f86485b8d398645c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameSceneName: Game1
+  gameSceneName: Intro
 --- !u!1 &1065697833
 GameObject:
   m_ObjectHideFlags: 0
