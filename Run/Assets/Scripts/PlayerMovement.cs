@@ -43,9 +43,10 @@ public class PlayerMovement : MonoBehaviour
     //public float obstacleJumpHeight = 7f;
     //public float obstacleJumpDuration = 0.4f;
 
+    [Header("Slope Settings")]
+    public float slopeStickOffset = -0.05f; // 기본값 -0.05f (바닥에 눌리게)
 
-   
-
+    private bool isOnSlopeZone = false;
 
     public float landingOffsetZ = 0.2f; // 🔹 장애물 윗면 중앙에서 앞으로 땡겨올 비율
     private int currentLane = 1;
@@ -265,22 +266,8 @@ public class PlayerMovement : MonoBehaviour
             if (fovCoroutine != null) StopCoroutine(fovCoroutine);
             fovCoroutine = StartCoroutine(ChangeFOV(defaultFOV, 0.5f)); // 0.5초 동안 복구
         }
-        // 🔹 쉐이더 강도 내리기
-        //StartCoroutine(AnimateSpeedShader(0f, 0.5f));
+    
     }
-    //private void SetSpeedEffect(bool enabled)
-    //{
-    //    Debug.Log($"[SetSpeedEffect 호출됨] enabled={enabled}, speedFeature={(speedFeature != null ? speedFeature.name : "NULL")}");
-
-    //    if (speedFeature == null)
-    //    {
-    //        Debug.LogWarning("[SetSpeedEffect] speedFeature 아직 연결 안됨");
-    //        return;
-    //    }
-
-    //    speedFeature.SetActive(enabled);
-    //    Debug.Log($"[RendererFeature 적용됨] {speedFeature.name} → {enabled}");
-    //}
 
     // 배율 → 타겟 FOV 계산 함수
     private float CalculateTargetFOV(float multiplier)
@@ -660,9 +647,10 @@ public class PlayerMovement : MonoBehaviour
         isBlocked = false;
         obstacleHeight = 0f;
     }
+  
     void FixedUpdate()
     {
-        if (isDead) return;
+        if (isDead || rb.isKinematic) return;
 
         if (isStunned)
         {
@@ -670,35 +658,72 @@ public class PlayerMovement : MonoBehaviour
             return; // 아래 이동 로직 실행 안 함
         }
         if (rb.isKinematic) return;
-
         // 앞으로 전진
         Vector3 vel = rb.linearVelocity;
-
-        if (isBlocked && !isDead && !isStunned)
+        vel.z = isBlocked ? 0f : runSpeed;
+        vel.x = 0;
+        // 경사 구간일 때는 Y 가속도 무시
+        if (isOnSlopeZone)
         {
-            vel.z = 0f; // 막혔으면 앞으로 안 나가게 고정
+            // 경사 전용 이동 처리
+            StickToGroundForce();
+            vel.y = 0f;
         }
-        else
-        {
-            vel.z = runSpeed > 0 ? runSpeed : baseSpeed; // 최소한 baseSpeed로 보정
-        }
-        vel.x = 0;          // 좌우는 레인 이동으로 제어
-        rb.linearVelocity = vel; // y는 그대로 유지 (점프 값 살림)
+       
+        rb.linearVelocity = vel;
 
+        
         // 좌우 이동
         Vector3 lanePos = new Vector3(targetPosition.x, rb.position.y, rb.position.z);
         rb.MovePosition(Vector3.MoveTowards(rb.position, lanePos, laneChangeSpeed * Time.fixedDeltaTime));
+      
+       
 
-        // 중력 가속 보정
+
+        //CheckGround();
+        //SnapToGround();
+        //StickToGround();
+        //  StickToGroundForce();
+        HandleNormalMovement();
+    }
+    private void HandleNormalMovement()
+    {
+        // 기존 FixedUpdate 코드 (앞으로 이동 + 중력 보정)
+        Vector3 vel = rb.linearVelocity;
+
+        if (isBlocked && !isDead && !isStunned)
+            vel.z = 0f;
+        else
+            vel.z = runSpeed > 0 ? runSpeed : baseSpeed;
+
+        vel.x = 0;
+        rb.linearVelocity = vel;
+
+        Vector3 lanePos = new Vector3(targetPosition.x, rb.position.y, rb.position.z);
+        rb.MovePosition(Vector3.MoveTowards(rb.position, lanePos, laneChangeSpeed * Time.fixedDeltaTime));
+
+        // 중력 보정
         if (!isGrounded && rb.linearVelocity.y < 0)
-        {
             rb.linearVelocity += Vector3.up * Physics.gravity.y * (fallMultiplier - 1) * Time.fixedDeltaTime;
-        }
+    }
+    private void StickToGroundForce()
+    {
+        // 캐릭터 중심에서 아래로 Raycast
+        if (Physics.Raycast(transform.position + Vector3.up * 0.5f,
+                            Vector3.down, out RaycastHit hit, 5f,
+                            LayerMask.GetMask("Untagged", "Obstacle")))
+        {
+            Vector3 pos = rb.position;
 
+            // 바닥 살짝 아래로 붙이기
+            pos.y = hit.point.y + 0.01f;
+
+            // 🔹 위치 강제 적용
+            rb.MovePosition(pos);
         
-        CheckGround();
-        SnapToGround();
-        StickToGround();
+            isGrounded = true;
+            hasJumped = false;
+        }
     }
     private void SnapToGround()
     {
@@ -851,12 +876,20 @@ public class PlayerMovement : MonoBehaviour
         yield return new WaitForFixedUpdate(); // 물리 프레임 한 번 기다린 뒤
         rb.isKinematic = false;                // 다시 활성화
     }
-    private void OnTriggerEnter(Collider other)
+  
+    private void OnTriggerExit(Collider other)
     {
-        if (invincibleTimer > 0f)
-            return; // 무적 상태라면 충돌 무시
-
+        if (other.CompareTag("Player"))
+        {
+            Rigidbody rb = other.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.useGravity = true;    // 경사 구간 벗어나면 다시 켜기
+            }
+        }
     }
-    
-
+    public void SetSlopeZone(bool active)
+    {
+        isOnSlopeZone = active;
+    }
 }

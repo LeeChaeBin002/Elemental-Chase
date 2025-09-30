@@ -124,7 +124,7 @@ public class RewardUI : MonoBehaviour
         if (collectedCoins >= 190) starCount = 3;  // 대박 보상
         else if (collectedCoins >= 130) starCount = 2;  // 중간 보상
         else if (collectedCoins >= 70) starCount = 1;  // 작은 보상
-        else starCount = 0;  // 실패
+        else  starCount = 0;  // 실패
 
         // 별 UI 업데이트
         UpdateStars(starCount);
