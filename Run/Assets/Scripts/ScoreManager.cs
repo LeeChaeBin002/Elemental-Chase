@@ -46,11 +46,11 @@ public class ScoreManager : MonoBehaviour
      
         if (scoreText != null)
         {
-            scoreText.text = "Score : " + score;
+            scoreText.text = "" + score;//Score : 
         }
         if (coinText != null)
         {
-            coinText.text = "Coin: "+ coinCount;
+            coinText.text = " "+ coinCount;//coin :
         }
     }
 }

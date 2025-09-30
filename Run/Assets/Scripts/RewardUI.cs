@@ -52,21 +52,21 @@ public class RewardUI : MonoBehaviour
         switch (buttonIndex)
         {
             case 0:
-                Debug.Log("Exit 버튼 1 → 메인 메뉴로 이동");
+                Debug.Log("Title 버튼 1 → 메인 메뉴로 이동");
                 Time.timeScale = 1f;  // 씬 이동 전에 복원
                 SceneManager.LoadScene("Title");
                 break;
 
             case 1:
-                Debug.Log("Exit 버튼 2 → 다음 스테이지로 이동");
+                Debug.Log(" 버튼 2 → 다시 스테이지로 이동");
                 Time.timeScale = 1f;  // 씬 이동 전에 복원
-                SceneManager.LoadScene("Title");
+                SceneManager.LoadScene("Game1");
                 break;
 
             case 2:
-                Debug.Log("Exit 버튼 3 → 게임 종료");
+                Debug.Log("Exit 버튼 3 → 다시 스테이지로 이동");
                 Time.timeScale = 1f;  // 씬 이동 전에 복원
-                SceneManager.LoadScene("Title");
+                SceneManager.LoadScene("Game1");
                 break;
         }
     }

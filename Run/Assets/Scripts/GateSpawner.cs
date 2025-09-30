@@ -13,9 +13,15 @@ public class GateSpawner : MonoBehaviour
     [Header("구간 설정")]
     public int stageIndex;         // 이 게이트가 담당하는 구간 번호 (1, 2, 3…)
 
-    [Header("구간 전용 BGM")]
+    [Header("스테이지 팝업 오브젝트")]
+    public GameObject stage2Popup;
+    public GameObject bossPopup;
 
+    [Header("구간 전용 BGM")]
     public AudioClip stageBGM;            // 이 구간 전용 BGM
+
+    [Header("이 구간 전용 UI 오브젝트")]
+    public GameObject stagePopup;
 
     private bool hasSpawned = false; // 중복 스폰 방지
 
@@ -53,7 +59,13 @@ public class GateSpawner : MonoBehaviour
                     }
                 }
             }
-
+            // 4️⃣ UI 팝업
+            if (StagePopupManager.Instance != null)
+            {
+     
+                if (stageIndex == 2) StagePopupManager.Instance.ShowStage(1); // Stage2
+                else if (stageIndex == 3) StagePopupManager.Instance.ShowStage(2); // Boss
+            }
             hasSpawned = true; // 중복 방지
         }
     }
