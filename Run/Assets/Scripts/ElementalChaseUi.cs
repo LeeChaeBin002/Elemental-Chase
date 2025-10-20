@@ -28,6 +28,9 @@ public class ElementalChaseUI : MonoBehaviour
         // 에디터에서 실행 중일 때도 종료되게
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Debug.unityLogger.logEnabled = false;
 #endif
+
     }
 }
