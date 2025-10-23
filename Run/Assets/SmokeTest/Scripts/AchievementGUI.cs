@@ -165,6 +165,10 @@ namespace SmokeTest
         internal void DoAchievementUI()
         {
             Social.ShowAchievementsUI();
+            PlayGamesPlatform.Instance.ShowAchievementsUI((status) =>
+            {
+                Debug.Log($"업적 UI: {status}");
+            });
             ShowEffect(true);
         }
 
